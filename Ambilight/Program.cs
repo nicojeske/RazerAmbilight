@@ -7,21 +7,16 @@ using System.Drawing.Imaging;
 using System.Threading;
 using System.Windows.Forms;
 using Corale.Colore.Razer.Keyboard;
-using Color = System.Drawing.Color;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 
 namespace Ambilight
 {
     internal class Program
     {
-        //RNG
-        private static Random _rng = new Random();
-        
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             //Tickrate
-            var tickrate = 1;
+            var tickrate = 5;
 
             if (args.Length == 1)
                 int.TryParse(args[0], out tickrate);
@@ -29,38 +24,59 @@ namespace Ambilight
             //Initializing Chroma SDK
             Chroma.Instance.Initialize();
 
-            //Tick count for updating Ambiligth
-            var start = Environment.TickCount;
-
-            //Just for future bug hunting
-            try
-            {
-                UpdateAmbiligth();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("It seems Ambilight doesn't work for you. Sorry for the inconvenience. Errormessage: " +
-                                e.Message);
-                return;
-            }
+            //Initialize Tray
+            Thread trayThread = new Thread(InitializeTray);
+            trayThread.Start();
 
             //Update every x ms since last update.
             while (true)
             {
-                UpdateAmbiligth();
-                Thread.Sleep(tickrate);
+                try
+                {
+                    UpdateAmbiligth();
+                    Thread.Sleep(tickrate);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("It seems Ambilight doesn't work for you. Sorry for the inconvenience. Errormessage: " +
+                                    e.Message);
+                    return;
+                }
             }
             
         }
 
         /// <summary>
-        /// Resize the image to the specified width and height.
+        /// Creates a tray item, which enables the user to close the application
+        /// </summary>
+        private static void InitializeTray()
+        {
+            var components = new System.ComponentModel.Container();
+            var contextMenu = new ContextMenu();
+            contextMenu.MenuItems.Add("Exit", (sender, args) =>  Environment.Exit(0));
+
+            var notifyIcon = new NotifyIcon(components)
+            {
+                Icon = new Icon("Color_Wheel.ico"),
+                Text = "Razer Ambilight",
+                Visible = true,
+               
+            };
+
+            notifyIcon.ContextMenu = contextMenu;
+            Application.Run();
+
+
+        }
+
+        /// <summary>
+        /// Resize an image to the specified width and height.
         /// </summary>
         /// <param name="image">The image to resize.</param>
         /// <param name="width">The width to resize to.</param>
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
-        public static Bitmap ResizeImage(Image image, int width, int height)
+        private static Bitmap ResizeImage(Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
@@ -107,14 +123,14 @@ namespace Ambilight
                                         CopyPixelOperation.SourceCopy);
 
             //Resizing the screenshot to the layout of the keyboard.
-            Bitmap map = ResizeImage(screen, Constants.MaxColumns, Constants.MaxRows);
+            var map = ResizeImage(screen, Constants.MaxColumns, Constants.MaxRows);
 
             //Iterating over each key and set it to the corrosponding color of the resized Screenshot
             for (var r = 0; r < Constants.MaxRows; r++)
             {
                 for (var c = 0; c < Constants.MaxColumns; c++)
                 {
-                    Color color = map.GetPixel(c, r);
+                    var color = map.GetPixel(c, r);
                     keyboardGrid[r,c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
             }
@@ -127,10 +143,5 @@ namespace Ambilight
             screen.Dispose();
             map.Dispose();
         }
-
-    
-
-      
-        
     }
 }
