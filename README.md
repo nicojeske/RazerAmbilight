@@ -1,6 +1,6 @@
 # RazerAmbilight
 A background process that creates an ambilight effect for razer keyboards.
-(tested with a Razer ornata chroma and a screen resolution of 1920*1080 pixels)
+(tested with a Razer ornata chroma and a screen resolution of 1920*1080 pixels, but should support all display resoulutions)
 
 # Usage:
 To use the effect, simply run Ambilight.exe. This then opens the process in the background. Until now, this can only be terminated via the Task Manager.
