@@ -1,31 +1,44 @@
 ﻿using System;
+using System.Configuration;
 using Corale.Colore.Core;
 using ColoreColor = Corale.Colore.Core.Color;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using Corale.Colore.Razer.Keyboard;
+using Microsoft.VisualBasic;
+using Constants = Corale.Colore.Razer.Keyboard.Constants;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 
 namespace Ambilight
 {
     internal class Program
     {
+        private static int _tickrate;
         private static void Main(string[] args)
         {
-            //Tickrate
-            var tickrate = 5;
+            try
+            {
+                _tickrate = Math.Abs(Properties.Settings.Default.tickrate);
+            }
+            catch (SettingsPropertyNotFoundException)
+            {
+                _tickrate = 5;
+            }
+
+
+            Console.WriteLine("tickrate: " + _tickrate);
 
             if (args.Length == 1)
-                int.TryParse(args[0], out tickrate);
+                int.TryParse(args[0], out _tickrate);
 
             //Initializing Chroma SDK
             Chroma.Instance.Initialize();
 
             //Initialize Tray
-            Thread trayThread = new Thread(InitializeTray);
+            var trayThread = new Thread(InitializeTray);
             trayThread.Start();
 
             //Update every x ms since last update.
@@ -34,7 +47,7 @@ namespace Ambilight
                 try
                 {
                     UpdateAmbiligth();
-                    Thread.Sleep(tickrate);
+                    Thread.Sleep(_tickrate);
                 }
                 catch (Exception e)
                 {
@@ -54,6 +67,7 @@ namespace Ambilight
             var components = new System.ComponentModel.Container();
             var contextMenu = new ContextMenu();
             contextMenu.MenuItems.Add("Exit", (sender, args) =>  Environment.Exit(0));
+            contextMenu.MenuItems.Add("Change tickrate", ChangeTickrateHandler);
 
             var notifyIcon = new NotifyIcon(components)
             {
@@ -67,6 +81,26 @@ namespace Ambilight
             Application.Run();
 
 
+        }
+
+        /// <summary>
+        /// Enables the user to manually change the tickrate with the trayicon.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void ChangeTickrateHandler(object sender, EventArgs e)
+        {
+            var tickrateString = Interaction.InputBox("New tickrate in ms", "change tickrate", _tickrate.ToString());
+            var newTickrate = _tickrate;
+            if (!int.TryParse(tickrateString, out newTickrate) || newTickrate < 1)
+            {
+                MessageBox.Show("Invalid input.", "Eror", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            _tickrate = newTickrate;
+            Properties.Settings.Default["tickrate"] = _tickrate;
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>
@@ -90,6 +124,7 @@ namespace Ambilight
                 graphics.InterpolationMode = InterpolationMode.Bicubic;
                 graphics.SmoothingMode = SmoothingMode.None;
                 graphics.PixelOffsetMode = PixelOffsetMode.None;
+               
 
                 using (var wrapMode = new ImageAttributes())
                 {
