@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Corale.Colore.Core;
+using Microsoft.VisualBasic;
+using System;
 using System.Configuration;
-using Corale.Colore.Core;
-using ColoreColor = Corale.Colore.Core.Color;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
+using AutoUpdaterDotNET;
+using Color = System.Drawing.Color;
+using ColoreColor = Corale.Colore.Core.Color;
 using Constants = Corale.Colore.Razer.Keyboard.Constants;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 
@@ -17,22 +18,30 @@ namespace Ambilight
     internal class Program
     {
         private static int _tickrate;
+        private static float _saturation;
+
         private static void Main(string[] args)
         {
+
+            AutoUpdater.Start("https://vertretungsplan.ga/ambi/ambi.xml");
+
             try
             {
                 _tickrate = Math.Abs(Properties.Settings.Default.tickrate);
+                _saturation = Properties.Settings.Default.saturation;
             }
             catch (SettingsPropertyNotFoundException)
             {
                 _tickrate = 5;
+                _saturation = 1f;
             }
-
 
             Console.WriteLine("tickrate: " + _tickrate);
 
             if (args.Length == 1)
+            {
                 int.TryParse(args[0], out _tickrate);
+            }
 
             //Initializing Chroma SDK
             Chroma.Instance.Initialize();
@@ -56,7 +65,6 @@ namespace Ambilight
                     return;
                 }
             }
-            
         }
 
         /// <summary>
@@ -66,21 +74,39 @@ namespace Ambilight
         {
             var components = new System.ComponentModel.Container();
             var contextMenu = new ContextMenu();
-            contextMenu.MenuItems.Add("Exit", (sender, args) =>  Environment.Exit(0));
+            contextMenu.MenuItems.Add("Exit", (sender, args) => Environment.Exit(0));
             contextMenu.MenuItems.Add("Change tickrate", ChangeTickrateHandler);
+            contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
 
             var notifyIcon = new NotifyIcon(components)
             {
                 Icon = new Icon("Color_Wheel.ico"),
                 Text = "Razer Ambilight",
                 Visible = true,
-               
             };
 
             notifyIcon.ContextMenu = contextMenu;
             Application.Run();
+        }
 
+        /// <summary>
+        /// Enables the user to manually change the saturation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void ChangeSaturationHandler(object sender, EventArgs e)
+        {
+            SaturationControl c = new SaturationControl(SaturationChangedHandler, _saturation * 100);
+            c.ShowDialog();
+        }
 
+        private static void SaturationChangedHandler(object sender, EventArgs e)
+        {
+            var trackBar = (TrackBar)sender;
+            float value = trackBar.Value;
+            _saturation = value / 100f;
+            Properties.Settings.Default.saturation = _saturation;
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>
@@ -124,7 +150,6 @@ namespace Ambilight
                 graphics.InterpolationMode = InterpolationMode.Bicubic;
                 graphics.SmoothingMode = SmoothingMode.None;
                 graphics.PixelOffsetMode = PixelOffsetMode.None;
-               
 
                 using (var wrapMode = new ImageAttributes())
                 {
@@ -158,15 +183,18 @@ namespace Ambilight
                                         CopyPixelOperation.SourceCopy);
 
             //Resizing the screenshot to the layout of the keyboard.
-            var map = ResizeImage(screen, Constants.MaxColumns, Constants.MaxRows);
+            Bitmap map = ResizeImage(screen, Constants.MaxColumns, Constants.MaxRows);
+
+            map = ApplySaturation(_saturation, map);
 
             //Iterating over each key and set it to the corrosponding color of the resized Screenshot
             for (var r = 0; r < Constants.MaxRows; r++)
             {
                 for (var c = 0; c < Constants.MaxColumns; c++)
                 {
-                    var color = map.GetPixel(c, r);
-                    keyboardGrid[r,c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                    Color color = map.GetPixel(c, r);
+
+                    keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
             }
 
@@ -177,6 +205,55 @@ namespace Ambilight
             gfxScreenshot.Dispose();
             screen.Dispose();
             map.Dispose();
+        }
+
+        private static Bitmap ApplySaturation(float saturation, Bitmap srcBitmap)
+        {
+            float rWeight = 0.3086f;
+            float gWeight = 0.6094f;
+            float bWeight = 0.0820f;
+
+            float a = (1.0f - saturation) * rWeight + saturation;
+            float b = (1.0f - saturation) * rWeight;
+            float c = (1.0f - saturation) * rWeight;
+            float d = (1.0f - saturation) * gWeight;
+            float e = (1.0f - saturation) * gWeight + saturation;
+            float f = (1.0f - saturation) * gWeight;
+            float g = (1.0f - saturation) * bWeight;
+            float h = (1.0f - saturation) * bWeight;
+            float i = (1.0f - saturation) * bWeight + saturation;
+
+            Bitmap returnBitmap = new Bitmap(srcBitmap.Width, srcBitmap.Height);
+
+            // Create a Graphics
+            using (Graphics gr = Graphics.FromImage(returnBitmap))
+            {
+                // ColorMatrix elements
+                float[][] ptsArray = {
+                                     new float[] {a,  b,  c,  0, 0},
+                                     new float[] {d,  e,  f,  0, 0},
+                                     new float[] {g,  h,  i,  0, 0},
+                                     new float[] {0,  0,  0,  1, 0},
+                                     new float[] {0, 0, 0, 0, 1}
+                                 };
+                // Create ColorMatrix
+                ColorMatrix clrMatrix = new ColorMatrix(ptsArray);
+                // Create ImageAttributes
+                ImageAttributes imgAttribs = new ImageAttributes();
+                // Set color matrix
+                imgAttribs.SetColorMatrix(clrMatrix,
+                    ColorMatrixFlag.Default,
+                    ColorAdjustType.Default);
+                // Draw Image with no effects
+                gr.DrawImage(srcBitmap, 0, 0, 200, 200);
+                // Draw Image with image attributes
+                gr.DrawImage(srcBitmap,
+                    new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height),
+                    0, 0, srcBitmap.Width, srcBitmap.Height,
+                    GraphicsUnit.Pixel, imgAttribs);
+            }
+
+            return returnBitmap;
         }
     }
 }
