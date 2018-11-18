@@ -34,5 +34,17 @@ namespace Ambilight.Properties {
                 this["tickrate"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float saturation {
+            get {
+                return ((float)(this["saturation"]));
+            }
+            set {
+                this["saturation"] = value;
+            }
+        }
     }
 }
