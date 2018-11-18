@@ -1,7 +1,7 @@
 # RazerAmbilight
 A background process that creates an ambilight effect for razer keyboards.
 
-![](ambi.gif)
+![](ambi_small.gif)
 
 # Usage:
 Simply install and start via the desktop icon.
