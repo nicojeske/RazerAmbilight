@@ -161,10 +161,14 @@ namespace Ambilight
             return destImage;
         }
 
+
         private static void UpdateAmbiligth()
         {
             //Empty CustomGrid to generate the ambilight effect into it.
             var keyboardGrid = KeyboardCustom.Create();
+            var mouseGrid = Corale.Colore.Razer.Mouse.Effects.CustomGrid.Create();
+            var mousePadGrid = Corale.Colore.Razer.Mousepad.Effects.Custom.Create();
+            
 
             //Creating a new Bitmap, with the current display resolution.
             var screen = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
@@ -198,12 +202,54 @@ namespace Ambilight
                 }
             }
 
+            Bitmap mapMouse = ResizeImage(screen, Corale.Colore.Razer.Mouse.Constants.MaxColumns,
+                Corale.Colore.Razer.Mouse.Constants.MaxRows);
+
+            mapMouse = ApplySaturation(_saturation, mapMouse);
+
+            for (var r = 0; r < Corale.Colore.Razer.Mouse.Constants.MaxRows; r++)
+            {
+                for (var c = 0; c < Corale.Colore.Razer.Mouse.Constants.MaxColumns; c++)
+                {
+                    Color color = mapMouse.GetPixel(c, r);
+                    mouseGrid[r, c] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+                }
+            }
+
+            Bitmap mapMousePad = ResizeImage(screen, 6,4);
+            mapMousePad = ApplySaturation(_saturation, mapMouse);
+
+            for (int i = 0; i < 4; i++)
+            {
+                Color color = mapMousePad.GetPixel(6, i);
+                mousePadGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+            }
+
+            Color colorC = mapMousePad.GetPixel(6, 4);
+            mousePadGrid[4] = new ColoreColor((byte)colorC.R, (byte)colorC.G, (byte)colorC.B);
+
+            for (int i = 5; i >= 0; i--)
+            {
+                Color color = mapMousePad.GetPixel(i, 5);
+                mousePadGrid[10-i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+            }
+
+            for (int i = 3; i >= 0; i--)
+            {
+                Color color = mapMousePad.GetPixel(0, i);
+                mousePadGrid[14 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+            }
+
+
             //The custom effect from the keyboard grid is applied to the keyboard.
             Chroma.Instance.Keyboard.SetCustom(keyboardGrid);
+            Chroma.Instance.Mouse.SetGrid(mouseGrid);
+            Chroma.Instance.Mousepad.SetCustom(mousePadGrid);
 
             //The graphic object, as well as the screenshot are disposed
             gfxScreenshot.Dispose();
             screen.Dispose();
+            mapMouse.Dispose();
             map.Dispose();
         }
 
