@@ -60,9 +60,9 @@ namespace Ambilight
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show("It seems Ambilight doesn't work for you. Sorry for the inconvenience. Errormessage: " +
-                                    e.Message);
-                    return;
+                    //For now ignore exceptions. And just try again in a second.
+                    //TODO: Implement a better way to check for errors and maybe use some method to send error codes to my server for debugging purposes.
+                    Thread.Sleep(1000);
                 }
             }
         }
