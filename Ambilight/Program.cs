@@ -8,9 +8,11 @@ using System.Drawing.Imaging;
 using System.Threading;
 using System.Windows.Forms;
 using AutoUpdaterDotNET;
+using Corale.Colore.Razer.Mouse.Effects;
 using Color = System.Drawing.Color;
 using ColoreColor = Corale.Colore.Core.Color;
 using Constants = Corale.Colore.Razer.Keyboard.Constants;
+using Custom = Corale.Colore.Razer.Mousepad.Effects.Custom;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 
 namespace Ambilight
@@ -19,29 +21,15 @@ namespace Ambilight
     {
         private static int _tickrate;
         private static float _saturation;
+        private static MenuItem _keyboardEnabled;
+        private static MenuItem _mouseEnabled;
+        private static MenuItem _mousematEnabled;
 
         private static void Main(string[] args)
         {
-
             AutoUpdater.Start("https://vertretungsplan.ga/ambi/ambi.xml");
 
-            try
-            {
-                _tickrate = Math.Abs(Properties.Settings.Default.tickrate);
-                _saturation = Properties.Settings.Default.saturation;
-            }
-            catch (SettingsPropertyNotFoundException)
-            {
-                _tickrate = 5;
-                _saturation = 1f;
-            }
-
-            Console.WriteLine("tickrate: " + _tickrate);
-
-            if (args.Length == 1)
-            {
-                int.TryParse(args[0], out _tickrate);
-            }
+            loadConfig();
 
             //Initializing Chroma SDK
             Chroma.Instance.Initialize();
@@ -53,22 +41,55 @@ namespace Ambilight
             //Update every x ms since last update.
             while (true)
             {
-                try
-                {
+               
                     UpdateAmbiligth();
                     Thread.Sleep(_tickrate);
-                }
-                catch (Exception e)
+               
+            }
+        }
+
+        private static void loadConfig()
+        {
+            _keyboardEnabled = new MenuItem("Keyboard enabled", (sender, args) =>
                 {
-                    //For now ignore exceptions. And just try again in a second.
-                    //TODO: Implement a better way to check for errors and maybe use some method to send error codes to my server for debugging purposes.
-                    Thread.Sleep(1000);
-                }
+                    EnableMenuItemOnClick(sender, args);
+                    Properties.Settings.Default.keyboardEnabled = _keyboardEnabled.Checked;
+                    Properties.Settings.Default.Save();
+                });
+
+            _mouseEnabled = new MenuItem("Mouse enabled", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.mouseEnabled = _mouseEnabled.Checked;
+                Properties.Settings.Default.Save();
+            });
+
+
+            _mousematEnabled = new MenuItem("Mousemat enabled", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.mousematEnabled = _mousematEnabled.Checked;
+                Properties.Settings.Default.Save();
+            });
+
+            try
+            {
+                _tickrate = Math.Abs(Properties.Settings.Default.tickrate);
+                _saturation = Properties.Settings.Default.saturation;
+                _keyboardEnabled.Checked = Properties.Settings.Default.keyboardEnabled;
+                _mouseEnabled.Checked = Properties.Settings.Default.mouseEnabled;
+                _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
+           
+            }
+            catch (SettingsPropertyNotFoundException)
+            {
+                _tickrate = 5;
+                _saturation = 1f;            
             }
         }
 
         /// <summary>
-        /// Creates a tray item, which enables the user to close the application
+        /// Creates a tray item, which enables the user to close the application and change settings
         /// </summary>
         private static void InitializeTray()
         {
@@ -77,16 +98,28 @@ namespace Ambilight
             contextMenu.MenuItems.Add("Exit", (sender, args) => Environment.Exit(0));
             contextMenu.MenuItems.Add("Change tickrate", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
+            contextMenu.MenuItems.Add("-");
+
+          
+            contextMenu.MenuItems.Add(_keyboardEnabled);
+            contextMenu.MenuItems.Add(_mouseEnabled);
+            contextMenu.MenuItems.Add(_mousematEnabled);
 
             var notifyIcon = new NotifyIcon(components)
             {
                 Icon = new Icon("Color_Wheel.ico"),
                 Text = "Razer Ambilight",
-                Visible = true,
+                Visible = true       
             };
 
             notifyIcon.ContextMenu = contextMenu;
             Application.Run();
+        }
+
+        private static void EnableMenuItemOnClick(object sender, EventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            item.Checked = !item.Checked;
         }
 
         /// <summary>
@@ -129,38 +162,6 @@ namespace Ambilight
             Properties.Settings.Default.Save();
         }
 
-        /// <summary>
-        /// Resize an image to the specified width and height.
-        /// </summary>
-        /// <param name="image">The image to resize.</param>
-        /// <param name="width">The width to resize to.</param>
-        /// <param name="height">The height to resize to.</param>
-        /// <returns>The resized image.</returns>
-        private static Bitmap ResizeImage(Image image, int width, int height)
-        {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
-
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(destImage))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighSpeed;
-                graphics.InterpolationMode = InterpolationMode.Bicubic;
-                graphics.SmoothingMode = SmoothingMode.None;
-                graphics.PixelOffsetMode = PixelOffsetMode.None;
-
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
-
-            return destImage;
-        }
-
 
         private static void UpdateAmbiligth()
         {
@@ -168,7 +169,7 @@ namespace Ambilight
             var keyboardGrid = KeyboardCustom.Create();
             var mouseGrid = Corale.Colore.Razer.Mouse.Effects.CustomGrid.Create();
             var mousePadGrid = Corale.Colore.Razer.Mousepad.Effects.Custom.Create();
-            
+
 
             //Creating a new Bitmap, with the current display resolution.
             var screen = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
@@ -186,27 +187,72 @@ namespace Ambilight
                                         Screen.PrimaryScreen.Bounds.Size,
                                         CopyPixelOperation.SourceCopy);
 
-            //Resizing the screenshot to the layout of the keyboard.
-            Bitmap map = ResizeImage(screen, Constants.MaxColumns, Constants.MaxRows);
+            //Actual Ambilight feature. Resizing the screencapture for the corresponding device and
+            //copy the colors.
 
-            map = ApplySaturation(_saturation, map);
 
-            //Iterating over each key and set it to the corrosponding color of the resized Screenshot
-            for (var r = 0; r < Constants.MaxRows; r++)
+            if (_keyboardEnabled.Checked)
             {
-                for (var c = 0; c < Constants.MaxColumns; c++)
-                {
-                    Color color = map.GetPixel(c, r);
-
-                    keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-                }
+                Bitmap map = Util.ResizeImage(screen, Constants.MaxColumns, Constants.MaxRows);
+                map = Util.ApplySaturation(map, _saturation);
+                keyboardGrid = GenerateKeyboardGrid(map, keyboardGrid);
+                Chroma.Instance.Keyboard.SetCustom(keyboardGrid);
+                map.Dispose();
             }
 
-            Bitmap mapMouse = ResizeImage(screen, Corale.Colore.Razer.Mouse.Constants.MaxColumns,
-                Corale.Colore.Razer.Mouse.Constants.MaxRows);
+            if (_mouseEnabled.Checked)
+            {
+                Bitmap mapMouse = Util.ResizeImage(screen, Corale.Colore.Razer.Mouse.Constants.MaxColumns,
+                    Corale.Colore.Razer.Mouse.Constants.MaxRows);
+                mapMouse = Util.ApplySaturation(mapMouse, _saturation);
+                mouseGrid = GenerateMouseGrid(mapMouse, mouseGrid);
+                Chroma.Instance.Mouse.SetGrid(mouseGrid);
+                mapMouse.Dispose();
+            }
 
-            mapMouse = ApplySaturation(_saturation, mapMouse);
+            if (_mousematEnabled.Checked)
+            {
+                Bitmap mapMousePad = Util.ResizeImage(screen, 7, 6);
+                mapMousePad = Util.ApplySaturation(mapMousePad, _saturation);
+                mousePadGrid = GenerateMousePadGrid(mapMousePad, mousePadGrid);
+                Chroma.Instance.Mousepad.SetCustom(mousePadGrid);
+                mapMousePad.Dispose();
+            }
+            
+            //The graphic object, as well as the screenshot are disposed
+            gfxScreenshot.Dispose();
+            screen.Dispose();
+               
+        }
 
+        private static Custom GenerateMousePadGrid(Bitmap mapMousePad, Custom mousePadGrid)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                Color color = mapMousePad.GetPixel(6, i);
+                mousePadGrid[i] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+            }
+
+            Color colorC = mapMousePad.GetPixel(6, 4);
+            mousePadGrid[4] = new ColoreColor((byte) colorC.R, (byte) colorC.G, (byte) colorC.B);
+
+            for (int i = 5; i >= 0; i--)
+            {
+                Color color = mapMousePad.GetPixel(i, 5);
+                mousePadGrid[10 - i] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+            }
+
+            for (int i = 3; i >= 0; i--)
+            {
+                Color color = mapMousePad.GetPixel(0, i);
+                mousePadGrid[14 - i] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+            }
+
+            return mousePadGrid;
+        }
+
+        private static CustomGrid GenerateMouseGrid(Bitmap mapMouse, CustomGrid mouseGrid)
+        {
             for (var r = 0; r < Corale.Colore.Razer.Mouse.Constants.MaxRows; r++)
             {
                 for (var c = 0; c < Corale.Colore.Razer.Mouse.Constants.MaxColumns; c++)
@@ -216,90 +262,23 @@ namespace Ambilight
                 }
             }
 
-            Bitmap mapMousePad = ResizeImage(screen, 6,4);
-            mapMousePad = ApplySaturation(_saturation, mapMouse);
-
-            for (int i = 0; i < 4; i++)
-            {
-                Color color = mapMousePad.GetPixel(6, i);
-                mousePadGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-            }
-
-            Color colorC = mapMousePad.GetPixel(6, 4);
-            mousePadGrid[4] = new ColoreColor((byte)colorC.R, (byte)colorC.G, (byte)colorC.B);
-
-            for (int i = 5; i >= 0; i--)
-            {
-                Color color = mapMousePad.GetPixel(i, 5);
-                mousePadGrid[10-i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-            }
-
-            for (int i = 3; i >= 0; i--)
-            {
-                Color color = mapMousePad.GetPixel(0, i);
-                mousePadGrid[14 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-            }
-
-
-            //The custom effect from the keyboard grid is applied to the keyboard.
-            Chroma.Instance.Keyboard.SetCustom(keyboardGrid);
-            Chroma.Instance.Mouse.SetGrid(mouseGrid);
-            Chroma.Instance.Mousepad.SetCustom(mousePadGrid);
-
-            //The graphic object, as well as the screenshot are disposed
-            gfxScreenshot.Dispose();
-            screen.Dispose();
-            mapMouse.Dispose();
-            map.Dispose();
+            return mouseGrid;
         }
 
-        private static Bitmap ApplySaturation(float saturation, Bitmap srcBitmap)
+        private static KeyboardCustom GenerateKeyboardGrid(Bitmap map, KeyboardCustom keyboardGrid)
         {
-            float rWeight = 0.3086f;
-            float gWeight = 0.6094f;
-            float bWeight = 0.0820f;
-
-            float a = (1.0f - saturation) * rWeight + saturation;
-            float b = (1.0f - saturation) * rWeight;
-            float c = (1.0f - saturation) * rWeight;
-            float d = (1.0f - saturation) * gWeight;
-            float e = (1.0f - saturation) * gWeight + saturation;
-            float f = (1.0f - saturation) * gWeight;
-            float g = (1.0f - saturation) * bWeight;
-            float h = (1.0f - saturation) * bWeight;
-            float i = (1.0f - saturation) * bWeight + saturation;
-
-            Bitmap returnBitmap = new Bitmap(srcBitmap.Width, srcBitmap.Height);
-
-            // Create a Graphics
-            using (Graphics gr = Graphics.FromImage(returnBitmap))
+//Iterating over each key and set it to the corrosponding color of the resized Screenshot
+            for (var r = 0; r < Constants.MaxRows; r++)
             {
-                // ColorMatrix elements
-                float[][] ptsArray = {
-                                     new float[] {a,  b,  c,  0, 0},
-                                     new float[] {d,  e,  f,  0, 0},
-                                     new float[] {g,  h,  i,  0, 0},
-                                     new float[] {0,  0,  0,  1, 0},
-                                     new float[] {0, 0, 0, 0, 1}
-                                 };
-                // Create ColorMatrix
-                ColorMatrix clrMatrix = new ColorMatrix(ptsArray);
-                // Create ImageAttributes
-                ImageAttributes imgAttribs = new ImageAttributes();
-                // Set color matrix
-                imgAttribs.SetColorMatrix(clrMatrix,
-                    ColorMatrixFlag.Default,
-                    ColorAdjustType.Default);
-                // Draw Image with no effects
-                gr.DrawImage(srcBitmap, 0, 0, 200, 200);
-                // Draw Image with image attributes
-                gr.DrawImage(srcBitmap,
-                    new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height),
-                    0, 0, srcBitmap.Width, srcBitmap.Height,
-                    GraphicsUnit.Pixel, imgAttribs);
+                for (var c = 0; c < Constants.MaxColumns; c++)
+                {
+                    Color color = map.GetPixel(c, r);
+
+                    keyboardGrid[r, c] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+                }
             }
 
-            return returnBitmap;
+            return keyboardGrid;
         }
     }
 }

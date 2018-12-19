@@ -135,6 +135,7 @@
     <Compile Include="SaturationControl.Designer.cs">
       <DependentUpon>SaturationControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
