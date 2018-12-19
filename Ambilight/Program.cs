@@ -41,9 +41,18 @@ namespace Ambilight
             //Update every x ms since last update.
             while (true)
             {
-               
+                try
+                {
                     UpdateAmbiligth();
                     Thread.Sleep(_tickrate);
+                }
+                catch (Exception e)
+                {
+                    //Currently just ignore errors.
+                    //TODO do something better
+                    Thread.Sleep(1000);
+                }
+                    
                
             }
         }
