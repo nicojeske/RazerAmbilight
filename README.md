@@ -1,17 +1,19 @@
 # RazerAmbilight
-A background process that creates an ambilight effect for razer keyboards.
 
 [Youtube Video](https://www.youtube.com/watch?v=ifXCZJyoKsw)
 
 ![](ambi_small.gif)
 
+## Function:
+* Maps your screen to your Razer mouse, keyboard and mousepad to create an "ambient effect"
+* You can change the saturation
+* You can change the update rate to reduce the cpu load
+* Settings can be found by right-clicking the program icon in your notification area on your task bar.
 
-# Usage:
-Download from [here](https://github.com/nicojeske/RazerAmbilight/releases/tag/1.6).
-Simply install and start via the desktop icon.
-If you want to stop the effect, right-click the icon in the tray and press Exit.
+## Download:
+You can always download the latest release from here: https://github.com/nicojeske/RazerAmbilight/releases
+Make sure that you have Razer Synapse running. Otherwise the app won't work.
 
-# Notes:
-During the installation, an autostart entry is defined, whereby the program starts automatically when Windows starts. You can deactivate this in the Task Manager in the auto start tab. 
-
-The update rate determines after how many milliseconds the effect should be updated.
+## Note:
+A Windows Smart Screen message may appear during installation. This tells you that my program is not signed by a certification authority recognized by Microsoft. Because these certifications cost a lot of money, which I cannot afford as a student, my program is not signed.
+A background process that creates an ambilight effect for razer keyboards.
