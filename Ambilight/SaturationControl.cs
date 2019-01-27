@@ -16,6 +16,8 @@ namespace Ambilight
 
         private void saturationBar_ValueChanged(object sender, EventArgs e)
         {
+          
+
             valueChangedHandler.Invoke(sender, e);
         }
     }

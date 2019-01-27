@@ -82,5 +82,29 @@ namespace Ambilight.Properties {
                 this["mousematEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int keyboardWidth {
+            get {
+                return ((int)(this["keyboardWidth"]));
+            }
+            set {
+                this["keyboardWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int keyboardHeight {
+            get {
+                return ((int)(this["keyboardHeight"]));
+            }
+            set {
+                this["keyboardHeight"] = value;
+            }
+        }
     }
 }

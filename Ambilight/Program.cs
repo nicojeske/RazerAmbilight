@@ -1,22 +1,23 @@
-﻿using Corale.Colore.Core;
+﻿using AutoUpdaterDotNET;
+using Corale.Colore.Core;
+using Corale.Colore.Razer.Mouse.Effects;
 using Microsoft.VisualBasic;
 using System;
 using System.Configuration;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Threading;
 using System.Windows.Forms;
-using AutoUpdaterDotNET;
-using Corale.Colore.Razer.Mouse.Effects;
+using NLog;
 using Color = System.Drawing.Color;
 using ColoreColor = Corale.Colore.Core.Color;
-using Constants = Corale.Colore.Razer.Keyboard.Constants;
 using Custom = Corale.Colore.Razer.Mousepad.Effects.Custom;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 
 namespace Ambilight
 {
+
+
     internal class Program
     {
         private static int _tickrate;
@@ -24,6 +25,10 @@ namespace Ambilight
         private static MenuItem _keyboardEnabled;
         private static MenuItem _mouseEnabled;
         private static MenuItem _mousematEnabled;
+        private static int _keyboardWidth = Corale.Colore.Razer.Keyboard.Constants.MaxColumns;
+        private static int _keyboardHeight = Corale.Colore.Razer.Keyboard.Constants.MaxRows;
+
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private static void Main(string[] args)
         {
@@ -38,6 +43,8 @@ namespace Ambilight
             var trayThread = new Thread(InitializeTray);
             trayThread.Start();
 
+            logger.Info("Initialized");
+
             //Update every x ms since last update.
             while (true)
             {
@@ -48,17 +55,20 @@ namespace Ambilight
                 }
                 catch (Exception e)
                 {
-                    //Currently just ignore errors.
-                    //TODO do something better
-                    Thread.Sleep(1000);
+                    logger.Warn("----------------ERROR START------------------");
+                    logger.Error(e);
+                    logger.Warn("---------------- ERROR END ------------------");
+
+                    Thread.Sleep(2000);                    
                 }
-                    
-               
-            }
+                
+            } 
         }
 
         private static void loadConfig()
         {
+
+           
             _keyboardEnabled = new MenuItem("Keyboard enabled", (sender, args) =>
                 {
                     EnableMenuItemOnClick(sender, args);
@@ -72,7 +82,6 @@ namespace Ambilight
                 Properties.Settings.Default.mouseEnabled = _mouseEnabled.Checked;
                 Properties.Settings.Default.Save();
             });
-
 
             _mousematEnabled = new MenuItem("Mousemat enabled", (sender, args) =>
             {
@@ -88,12 +97,23 @@ namespace Ambilight
                 _keyboardEnabled.Checked = Properties.Settings.Default.keyboardEnabled;
                 _mouseEnabled.Checked = Properties.Settings.Default.mouseEnabled;
                 _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
-           
+                int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
+                int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
+
+                if (_keyboardWidthProperty >= 0)
+                {
+                    _keyboardWidth = _keyboardWidthProperty;
+                }
+
+                if (_keyboardHeightProperty >= 0)
+                {
+                    _keyboardHeight = _keyboardHeightProperty;
+                }
             }
             catch (SettingsPropertyNotFoundException)
             {
                 _tickrate = 5;
-                _saturation = 1f;            
+                _saturation = 1f;
             }
         }
 
@@ -107,9 +127,9 @@ namespace Ambilight
             contextMenu.MenuItems.Add("Exit", (sender, args) => Environment.Exit(0));
             contextMenu.MenuItems.Add("Change tickrate", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
+            contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);
             contextMenu.MenuItems.Add("-");
 
-          
             contextMenu.MenuItems.Add(_keyboardEnabled);
             contextMenu.MenuItems.Add(_mouseEnabled);
             contextMenu.MenuItems.Add(_mousematEnabled);
@@ -118,11 +138,27 @@ namespace Ambilight
             {
                 Icon = new Icon("Color_Wheel.ico"),
                 Text = "Razer Ambilight",
-                Visible = true       
+                Visible = true
             };
 
             notifyIcon.ContextMenu = contextMenu;
             Application.Run();
+        }
+
+        private static void changeKeyboardSizeHandler(object sender, EventArgs e)
+        {
+            KeyboardSizeControl k = new KeyboardSizeControl(keyboardSizeChangedHandler, _keyboardWidth, _keyboardHeight);
+            k.Show();
+        }
+
+        private static void keyboardSizeChangedHandler(object sender, EventArgs e)
+        {
+            KeyboardSizeControl k = sender as KeyboardSizeControl;
+            _keyboardWidth = k.GetTxtWidth();
+            _keyboardHeight = k.GetTxtHeight();
+            Properties.Settings.Default.keyboardWidth = _keyboardWidth;
+            Properties.Settings.Default.keyboardHeight = _keyboardHeight;
+            Properties.Settings.Default.Save();
         }
 
         private static void EnableMenuItemOnClick(object sender, EventArgs e)
@@ -171,14 +207,12 @@ namespace Ambilight
             Properties.Settings.Default.Save();
         }
 
-
         private static void UpdateAmbiligth()
         {
             //Empty CustomGrid to generate the ambilight effect into it.
             var keyboardGrid = KeyboardCustom.Create();
             var mouseGrid = Corale.Colore.Razer.Mouse.Effects.CustomGrid.Create();
             var mousePadGrid = Corale.Colore.Razer.Mousepad.Effects.Custom.Create();
-
 
             //Creating a new Bitmap, with the current display resolution.
             var screen = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
@@ -198,11 +232,10 @@ namespace Ambilight
 
             //Actual Ambilight feature. Resizing the screencapture for the corresponding device and
             //copy the colors.
-
-
+  
             if (_keyboardEnabled.Checked)
             {
-                Bitmap map = Util.ResizeImage(screen, Constants.MaxColumns, Constants.MaxRows);
+                Bitmap map = Util.ResizeImage(screen, _keyboardWidth, _keyboardHeight);
                 map = Util.ApplySaturation(map, _saturation);
                 keyboardGrid = GenerateKeyboardGrid(map, keyboardGrid);
                 Chroma.Instance.Keyboard.SetCustom(keyboardGrid);
@@ -227,11 +260,10 @@ namespace Ambilight
                 Chroma.Instance.Mousepad.SetCustom(mousePadGrid);
                 mapMousePad.Dispose();
             }
-            
+
             //The graphic object, as well as the screenshot are disposed
             gfxScreenshot.Dispose();
             screen.Dispose();
-               
         }
 
         private static Custom GenerateMousePadGrid(Bitmap mapMousePad, Custom mousePadGrid)
@@ -239,22 +271,22 @@ namespace Ambilight
             for (int i = 0; i < 4; i++)
             {
                 Color color = mapMousePad.GetPixel(6, i);
-                mousePadGrid[i] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+                mousePadGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
             }
 
             Color colorC = mapMousePad.GetPixel(6, 4);
-            mousePadGrid[4] = new ColoreColor((byte) colorC.R, (byte) colorC.G, (byte) colorC.B);
+            mousePadGrid[4] = new ColoreColor((byte)colorC.R, (byte)colorC.G, (byte)colorC.B);
 
             for (int i = 5; i >= 0; i--)
             {
                 Color color = mapMousePad.GetPixel(i, 5);
-                mousePadGrid[10 - i] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+                mousePadGrid[10 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
             }
 
             for (int i = 3; i >= 0; i--)
             {
                 Color color = mapMousePad.GetPixel(0, i);
-                mousePadGrid[14 - i] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+                mousePadGrid[14 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
             }
 
             return mousePadGrid;
@@ -267,7 +299,7 @@ namespace Ambilight
                 for (var c = 0; c < Corale.Colore.Razer.Mouse.Constants.MaxColumns; c++)
                 {
                     Color color = mapMouse.GetPixel(c, r);
-                    mouseGrid[r, c] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+                    mouseGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
             }
 
@@ -276,14 +308,14 @@ namespace Ambilight
 
         private static KeyboardCustom GenerateKeyboardGrid(Bitmap map, KeyboardCustom keyboardGrid)
         {
-//Iterating over each key and set it to the corrosponding color of the resized Screenshot
-            for (var r = 0; r < Constants.MaxRows; r++)
+            //Iterating over each key and set it to the corrosponding color of the resized Screenshot
+            for (var r = 0; r < _keyboardHeight; r++)
             {
-                for (var c = 0; c < Constants.MaxColumns; c++)
+                for (var c = 0; c < _keyboardWidth; c++)
                 {
                     Color color = map.GetPixel(c, r);
 
-                    keyboardGrid[r, c] = new ColoreColor((byte) color.R, (byte) color.G, (byte) color.B);
+                    keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
             }
 
