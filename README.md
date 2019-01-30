@@ -15,5 +15,4 @@ You can always download the latest release from here: https://github.com/nicojes
 Make sure that you have Razer Synapse running. Otherwise the app won't work.
 
 ## Note:
-A Windows Smart Screen message may appear during installation. This tells you that my program is not signed by a certification authority recognized by Microsoft. Because these certifications cost a lot of money, which I cannot afford as a student, my program is not signed.
-A background process that creates an ambilight effect for razer keyboards.
+A Windows Smart Screen message may appear during installation. This tells you that my program is not signed by a certification authority recognized by Microsoft. Because these certifications cost a lot of money, which I cannot afford as a student, my program is therefore not signed.
