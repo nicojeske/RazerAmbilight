@@ -32,6 +32,9 @@ namespace Ambilight
 
         private static void Main(string[] args)
         {
+
+            logger.Info("\n\n\n --- Razer Ambilight Version 1.6.6 ----");
+
             AutoUpdater.Start("https://vertretungsplan.ga/ambi/ambi.xml");
 
             loadConfig();
@@ -58,7 +61,6 @@ namespace Ambilight
                     logger.Warn("----------------ERROR START------------------");
                     logger.Error(e);
                     logger.Warn("---------------- ERROR END ------------------");
-
                     Thread.Sleep(2000);                    
                 }
                 
@@ -76,6 +78,10 @@ namespace Ambilight
                     Properties.Settings.Default.Save();
                 });
 
+         
+
+            
+
             _mouseEnabled = new MenuItem("Mouse enabled", (sender, args) =>
             {
                 EnableMenuItemOnClick(sender, args);
@@ -83,12 +89,16 @@ namespace Ambilight
                 Properties.Settings.Default.Save();
             });
 
+           
+
             _mousematEnabled = new MenuItem("Mousemat enabled", (sender, args) =>
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.mousematEnabled = _mousematEnabled.Checked;
                 Properties.Settings.Default.Save();
             });
+
+           
 
             try
             {
@@ -99,6 +109,8 @@ namespace Ambilight
                 _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
+
+                
 
                 if (_keyboardWidthProperty >= 0)
                 {
@@ -115,6 +127,15 @@ namespace Ambilight
                 _tickrate = 5;
                 _saturation = 1f;
             }
+
+            logger.Info("Keyboard enabled: " + _keyboardEnabled.Checked);
+            logger.Info("Keyboard width: " + _keyboardWidth);
+            logger.Info("Keyboard height: " + _keyboardHeight);
+            logger.Info("Mouse enabled: " + _mouseEnabled.Checked);
+            logger.Info("Mousemat enabled: " + _mousematEnabled.Checked);
+
+            logger.Info("Tickrate: " + _tickrate);
+            logger.Info("Saturation: " + _saturation);
         }
 
         /// <summary>
