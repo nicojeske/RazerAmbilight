@@ -24,6 +24,26 @@
                 Represents the time span in days.
             </summary>
         </member>
+        <member name="T:AutoUpdaterDotNET.Mode">
+            <summary>
+                Enum representing the effect of Mandatory flag.
+            </summary>
+        </member>
+        <member name="F:AutoUpdaterDotNET.Mode.Normal">
+            <summary>
+            In this mode, it ignores Remind Later and Skip values set previously and hide both buttons.
+            </summary>
+        </member>
+        <member name="F:AutoUpdaterDotNET.Mode.Forced">
+            <summary>
+            In this mode, it won't show close button in addition to Normal mode behaviour.
+            </summary>
+        </member>
+        <member name="F:AutoUpdaterDotNET.Mode.ForcedDownload">
+            <summary>
+            In this mode, it will start downloading and applying update without showing standarad update dialog in addition to Forced mode behaviour.
+            </summary>
+        </member>
         <member name="T:AutoUpdaterDotNET.AutoUpdater">
             <summary>
                 Main class that lets you auto update applications by setting some static fields and executing its Start method.
@@ -46,7 +66,17 @@
         </member>
         <member name="F:AutoUpdaterDotNET.AutoUpdater.OpenDownloadPage">
             <summary>
-                Opens the download url in default browser if true. Very usefull if you have portable application.
+                Opens the download URL in default browser if true. Very usefull if you have portable application.
+            </summary>
+        </member>
+        <member name="F:AutoUpdaterDotNET.AutoUpdater.BasicAuthDownload">
+            <summary>
+                Set Basic Authentication credentials required to download the file.
+            </summary>
+        </member>
+        <member name="F:AutoUpdaterDotNET.AutoUpdater.BasicAuthXML">
+            <summary>
+                Set Basic Authentication credentials required to download the XML file.
             </summary>
         </member>
         <member name="F:AutoUpdaterDotNET.AutoUpdater.ShowSkipButton">
@@ -84,6 +114,11 @@
             <summary>
                  Set this to true if you want to ignore previously assigned Remind Later and Skip settings. It will also hide Remind Later and Skip buttons.
              </summary>
+        </member>
+        <member name="F:AutoUpdaterDotNET.AutoUpdater.UpdateMode">
+            <summary>
+                Set this to any of the available modes to change behaviour of the Mandatory flag.
+            </summary>
         </member>
         <member name="F:AutoUpdaterDotNET.AutoUpdater.Proxy">
             <summary>
@@ -140,6 +175,11 @@
             <param name="appCast">URL of the xml file that contains information about latest version of the application.</param>
             <param name="myAssembly">Assembly to use for version checking.</param>
         </member>
+        <member name="M:AutoUpdaterDotNET.AutoUpdater.ShowUpdateForm">
+            <summary>
+            Shows standard update dialog.
+            </summary>
+        </member>
         <member name="M:AutoUpdaterDotNET.AutoUpdater.Exit">
             <summary>
             Detects and exits all instances of running assembly, including current.
@@ -185,6 +225,11 @@
                 Shows if the update is required or optional.
             </summary>
         </member>
+        <member name="P:AutoUpdaterDotNET.UpdateInfoEventArgs.UpdateMode">
+            <summary>
+                Defines how the Mandatory flag should work.
+            </summary>
+        </member>
         <member name="P:AutoUpdaterDotNET.UpdateInfoEventArgs.InstallerArgs">
             <summary>
                 Command line arguments used by Installer.
@@ -202,7 +247,7 @@
         </member>
         <member name="T:AutoUpdaterDotNET.ParseUpdateInfoEventArgs">
             <summary>
-                An object of this class contains the AppCast file received from server..
+                An object of this class contains the AppCast file received from server.
             </summary>
         </member>
         <member name="P:AutoUpdaterDotNET.ParseUpdateInfoEventArgs.RemoteData">
@@ -220,6 +265,21 @@
                 An object containing the AppCast file received from server.
             </summary>
             <param name="remoteData">A string containing remote data received from the AppCast file.</param>
+        </member>
+        <member name="T:AutoUpdaterDotNET.BasicAuthentication">
+            <summary>
+                Provides Basic Authentication header for web request.
+            </summary>
+        </member>
+        <member name="M:AutoUpdaterDotNET.BasicAuthentication.#ctor(System.String,System.String)">
+            <summary>
+            Initializes credentials for Basic Authentication.
+            </summary>
+            <param name="username">Username to use for Basic Authentication</param>
+            <param name="password">Password to use for Basic Authentication</param>
+        </member>
+        <member name="M:AutoUpdaterDotNET.BasicAuthentication.ToString">
+            <inheritdoc />
         </member>
         <member name="F:AutoUpdaterDotNET.DownloadUpdateDialog.components">
             <summary>

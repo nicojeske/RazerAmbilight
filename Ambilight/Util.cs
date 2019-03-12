@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 
 namespace Ambilight
 {
-    internal class Util
+    internal class Utility
     {
         /// <summary>
         /// Resize an image to the specified width and height.

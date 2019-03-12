@@ -13,6 +13,7 @@ using Color = System.Drawing.Color;
 using ColoreColor = Corale.Colore.Core.Color;
 using Custom = Corale.Colore.Razer.Mousepad.Effects.Custom;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
+using Ambilight.DesktopDuplication;
 
 namespace Ambilight
 {
@@ -30,7 +31,7 @@ namespace Ambilight
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        private static void Main(string[] args)
+        public Program()
         {
 
             logger.Info("\n\n\n --- Razer Ambilight Version 1.6.6 ----");
@@ -41,6 +42,19 @@ namespace Ambilight
 
             //Initializing Chroma SDK
             Chroma.Instance.Initialize();
+        }
+
+        private static void Main(string[] args)
+        {
+
+            logger.Info("\n\n\n --- Razer Ambilight Version 1.6.6 ----");
+
+            AutoUpdater.Start("https://vertretungsplan.ga/ambi/ambi.xml");
+
+            loadConfig();
+
+            //Initializing Chroma SDK
+            //Chroma.Instance.Initialize();
 
             //Initialize Tray
             var trayThread = new Thread(InitializeTray);
@@ -48,23 +62,14 @@ namespace Ambilight
 
             logger.Info("Initialized");
 
+            DesktopDuplicatorReader reader = new DesktopDuplicatorReader(new Program());
+
+
+            
+
+
             //Update every x ms since last update.
-            while (true)
-            {
-                try
-                {
-                    UpdateAmbiligth();
-                    Thread.Sleep(_tickrate);
-                }
-                catch (Exception e)
-                {
-                    logger.Warn("----------------ERROR START------------------");
-                    logger.Error(e);
-                    logger.Warn("---------------- ERROR END ------------------");
-                    Thread.Sleep(2000);                    
-                }
-                
-            } 
+          
         }
 
         private static void loadConfig()
@@ -136,6 +141,11 @@ namespace Ambilight
 
             logger.Info("Tickrate: " + _tickrate);
             logger.Info("Saturation: " + _saturation);
+        }
+
+        internal void newImage(Bitmap newImage)
+        {
+           UpdateAmbiligth(newImage);
         }
 
         /// <summary>
@@ -228,36 +238,19 @@ namespace Ambilight
             Properties.Settings.Default.Save();
         }
 
-        private static void UpdateAmbiligth()
+        private static void UpdateAmbiligth(Bitmap bitmap)
         {
             //Empty CustomGrid to generate the ambilight effect into it.
             var keyboardGrid = KeyboardCustom.Create();
             var mouseGrid = Corale.Colore.Razer.Mouse.Effects.CustomGrid.Create();
             var mousePadGrid = Corale.Colore.Razer.Mousepad.Effects.Custom.Create();
 
-            //Creating a new Bitmap, with the current display resolution.
-            var screen = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
-                                Screen.PrimaryScreen.Bounds.Height,
-                                PixelFormat.Format32bppArgb);
-
-            // Create a graphics object from the bitmap.
-            var gfxScreenshot = Graphics.FromImage(screen);
-
-            // Take the screenshot from the upper left corner to the right bottom corner of the screen.
-            gfxScreenshot.CopyFromScreen(Screen.PrimaryScreen.Bounds.X,
-                                        Screen.PrimaryScreen.Bounds.Y,
-                                        0,
-                                        0,
-                                        Screen.PrimaryScreen.Bounds.Size,
-                                        CopyPixelOperation.SourceCopy);
-
-            //Actual Ambilight feature. Resizing the screencapture for the corresponding device and
-            //copy the colors.
+           
   
             if (_keyboardEnabled.Checked)
             {
-                Bitmap map = Util.ResizeImage(screen, _keyboardWidth, _keyboardHeight);
-                map = Util.ApplySaturation(map, _saturation);
+                Bitmap map = Utility.ResizeImage(bitmap, _keyboardWidth, _keyboardHeight);
+                map = Utility.ApplySaturation(map, _saturation);
                 keyboardGrid = GenerateKeyboardGrid(map, keyboardGrid);
                 Chroma.Instance.Keyboard.SetCustom(keyboardGrid);
                 map.Dispose();
@@ -265,9 +258,9 @@ namespace Ambilight
 
             if (_mouseEnabled.Checked)
             {
-                Bitmap mapMouse = Util.ResizeImage(screen, Corale.Colore.Razer.Mouse.Constants.MaxColumns,
+                Bitmap mapMouse = Utility.ResizeImage(bitmap, Corale.Colore.Razer.Mouse.Constants.MaxColumns,
                     Corale.Colore.Razer.Mouse.Constants.MaxRows);
-                mapMouse = Util.ApplySaturation(mapMouse, _saturation);
+                mapMouse = Utility.ApplySaturation(mapMouse, _saturation);
                 mouseGrid = GenerateMouseGrid(mapMouse, mouseGrid);
                 Chroma.Instance.Mouse.SetGrid(mouseGrid);
                 mapMouse.Dispose();
@@ -275,16 +268,16 @@ namespace Ambilight
 
             if (_mousematEnabled.Checked)
             {
-                Bitmap mapMousePad = Util.ResizeImage(screen, 7, 6);
-                mapMousePad = Util.ApplySaturation(mapMousePad, _saturation);
+                Bitmap mapMousePad = Utility.ResizeImage(bitmap, 7, 6);
+                mapMousePad = Utility.ApplySaturation(mapMousePad, _saturation);
                 mousePadGrid = GenerateMousePadGrid(mapMousePad, mousePadGrid);
                 Chroma.Instance.Mousepad.SetCustom(mousePadGrid);
                 mapMousePad.Dispose();
             }
 
             //The graphic object, as well as the screenshot are disposed
-            gfxScreenshot.Dispose();
-            screen.Dispose();
+           // gfxScreenshot.Dispose();
+           // screen.Dispose();
         }
 
         private static Custom GenerateMousePadGrid(Bitmap mapMousePad, Custom mousePadGrid)

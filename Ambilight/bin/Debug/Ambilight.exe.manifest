@@ -4,7 +4,7 @@
   <description asmv2:iconFile="Color_Wheel.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="Ambilight" version="1.5.0.0" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="Ambilight" version="1.6.5.0" language="neutral" processorArchitecture="msil" />
     <commandLine file="Ambilight.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,24 +43,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Ambilight.exe" size="1270272">
-      <assemblyIdentity name="Ambilight" version="1.5.0.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Ambilight.exe" size="4574720">
+      <assemblyIdentity name="Ambilight" version="1.6.5.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>YhDWWhDnK0v8hC9hTg1Ge4aYfFjqr9YGgZGKVDtiZkw=</dsig:DigestValue>
+        <dsig:DigestValue>AELLyG6Vr5JzjoZ6uFCWdjwrPG83Gi5im9zt1c/j6C8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Ambilight.exe.config" size="1038">
+  <file name="Ambilight.exe.config" size="19383">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>4naxOeFVMNEwj5ZodsKaNnO6j1aXPwlLeoBF/JtFKLk=</dsig:DigestValue>
+      <dsig:DigestValue>+ptTD705Vb2dSpcB4TDkk4mYsXNrqbhcCl0GKvy+urQ=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Color_Wheel.ico" size="370070">
@@ -79,6 +79,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>wNZfdme8o/Mx+z65HOlTkKrnhbOVUHanv82xNbMqObI=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="NLog.config" size="1637">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Uwx2UezOLCL1G0JL1xXXbT0XTJz5WYBHT4TgazLtn3g=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
