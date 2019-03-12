@@ -7,14 +7,14 @@
     <framework targetVersion="4.6.1" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="Ambilight.exe.manifest" size="5595">
+    <dependentAssembly dependencyType="install" codebase="Ambilight.exe.manifest" size="5985">
       <assemblyIdentity name="Ambilight.exe" version="1.4.0.1" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>wiZU23nzAQ3ST0O8Z3jw2FtxsXH80cE7RZ+gIa18m3I=</dsig:DigestValue>
+        <dsig:DigestValue>39A0DrZDTV2TIdCJu6o06P9qstdfiCF8BsWWOFBXjs4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
