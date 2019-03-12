@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 
 namespace Ambilight
 {
-    internal class Utility
+    class ImageManipulation
     {
         /// <summary>
         /// Resize an image to the specified width and height.
@@ -38,6 +38,12 @@ namespace Ambilight
             return destImage;
         }
 
+        /// <summary>
+        /// Applies a given saturation value to a Bitmap.
+        /// </summary>
+        /// <param name="srcBitmap">Bitmap</param>
+        /// <param name="saturation">Saturation Value</param>
+        /// <returns></returns>
         public static Bitmap ApplySaturation(Bitmap srcBitmap, float saturation)
         {
             float rWeight = 0.3086f;

@@ -1,37 +1,27 @@
 ﻿using NLog;
-using Polly;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Ambilight.DesktopDuplication
 {
     internal class DesktopDuplicatorReader : IDesktopDuplicatorReader
     {
-        private readonly ILogger _log = LogManager.GetCurrentClassLogger();
-        private readonly Program _logic;
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private readonly Logic.LogicManager _logic;
+        private readonly GUI.TraySettings settings;
 
-
-        public DesktopDuplicatorReader(Program logic)
+        public DesktopDuplicatorReader(Logic.LogicManager logic, GUI.TraySettings settings)
         {
             this._logic = logic;
-            _retryPolicy = Policy.Handle<Exception>()
-                .WaitAndRetryForever(ProvideDelayDuration);
+            this.settings = settings;
+
 
             RefreshCapturingState();
 
             _log.Info($"DesktopDuplicatorReader created.");
-        }
-
-        private void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-
         }
 
         public bool IsRunning { get; private set; } = false;
@@ -63,25 +53,7 @@ namespace Ambilight.DesktopDuplication
                 thread.Start();
             }
         }
-
-        private readonly Policy _retryPolicy;
-
-        private TimeSpan ProvideDelayDuration(int index)
-        {
-            if (index < 10)
-            {
-                //first second
-                return TimeSpan.FromMilliseconds(100);
-            }
-
-            if (index < 10 + 256)
-            {
-                //steps where there is also led dimming
-                return TimeSpan.FromMilliseconds(5000d / 256);
-            }
-            return TimeSpan.FromMilliseconds(1000);
-        }
-
+       
         private DesktopDuplicator _desktopDuplicator;
 
         public void Run(CancellationToken token)
@@ -98,8 +70,7 @@ namespace Ambilight.DesktopDuplication
                 while (!token.IsCancellationRequested)
                 {
                     var frameTime = Stopwatch.StartNew();
-                    var newImage = _retryPolicy.Execute(() => GetNextFrame(image));
-                    TraceFrameDetails(newImage);
+                    var newImage = GetNextFrame(image);
                     if (newImage == null)
                     {
                         //there was a timeout before there was the next frame, simply retry!
@@ -107,11 +78,9 @@ namespace Ambilight.DesktopDuplication
                     }
                     image = newImage;
 
-                    _logic.newImage(newImage);
+                    _logic.ProcessNewImage(newImage);
 
-
-
-                    int minFrameTimeInMs = 1000 / 20; //1000/FPS
+                    int minFrameTimeInMs = 1000 / settings.Tickrate; //1000/FPS
                     var elapsedMs = (int)frameTime.ElapsedMilliseconds;
                     if (elapsedMs < minFrameTimeInMs)
                     {
@@ -131,42 +100,8 @@ namespace Ambilight.DesktopDuplication
             }
         }
 
-        private int? _lastObservedHeight;
-        private int? _lastObservedWidth;
-
-        private void TraceFrameDetails(Bitmap image)
-        {
-            //there are many frames per second and we need to extract useful information and only log those!
-            if (image == null)
-            {
-                //if the frame is null, this can mean two things. the timeout from the desktop duplication api was reached
-                //before the monitor content changed or there was some other error.
-            }
-            else
-            {
-                if (_lastObservedHeight != null && _lastObservedWidth != null
-                    && (_lastObservedHeight != image.Height || _lastObservedWidth != image.Width))
-                {
-                    _log.Debug("The frame size changed from {0}x{1} to {2}x{3}"
-                        , _lastObservedWidth, _lastObservedHeight
-                        , image.Width, image.Height);
-
-                }
-                _lastObservedWidth = image.Width;
-                _lastObservedHeight = image.Height;
-            }
-        }
-
-        private void ApplyColorCorrections(float r, float g, float b, out byte finalR, out byte finalG, out byte finalB, bool useLinearLighting, byte saturationTreshold
-            , byte lastColorR, byte lastColorG, byte lastColorB)
-        {
-          
-                //output
-                finalR = (byte)r;
-                finalG = (byte)g;
-                finalB = (byte)b;
-            
-        }
+    
+      
 
         private Bitmap GetNextFrame(Bitmap reusableBitmap)
         {
@@ -188,7 +123,7 @@ namespace Ambilight.DesktopDuplication
 
                 _desktopDuplicator?.Dispose();
                 _desktopDuplicator = null;
-                throw;
+                return null;
             }
         }
 

@@ -6,14 +6,15 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ambilight.Util
 {
+    /// <summary>
+    /// Class for logging the real FPS
+    /// </summary>
     sealed class FpsLogger : IDisposable
     {
-        private ILogger _log = LogManager.GetCurrentClassLogger();
+        private Logger _log = LogManager.GetCurrentClassLogger();
 
         private readonly string _name;
         private readonly Subject<Unit> _frames = new Subject<Unit>();
@@ -57,13 +58,23 @@ namespace Ambilight.Util
 
         public int Fps { get; private set; }
 
+        /// <summary>
+        /// Writes the current fps to the log
+        /// </summary>
+        /// <param name="fps"></param>
         private void WriteFpsLog(int fps)
         {
             _log.Debug($"there were {fps} frames for {_name} in the last second.");
         }
 
+        /// <summary>
+        /// Tracks a single frame
+        /// </summary>
         public void TrackSingleFrame() => _frames.OnNext(Unit.Default);
 
+        /// <summary>
+        /// Disposing
+        /// </summary>
         public void Dispose()
         {
             _valueUpdatingSubscription?.Dispose();
