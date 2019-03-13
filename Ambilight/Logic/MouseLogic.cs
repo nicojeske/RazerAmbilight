@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Corale.Colore.Razer.Mouse.Effects;
 using ColoreColor = Corale.Colore.Core.Color;
+using Ambilight.GUI;
 
 namespace Ambilight.Logic
 {
@@ -16,6 +17,12 @@ namespace Ambilight.Logic
     /// </summary>
     class MouseLogic
     {
+        private TraySettings settings;
+
+        public MouseLogic(TraySettings settings)
+        {
+            this.settings = settings;
+        }
 
         /// <summary>
         /// Processes a ScreenShot and creates an Ambilight Effect for the mouse

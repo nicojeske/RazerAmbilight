@@ -185,8 +185,8 @@
     <Compile Include="GUI\SaturationControl.Designer.cs">
       <DependentUpon>SaturationControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Util\ImageResizer.cs" />
     <Compile Include="Util\FpsLogger.cs" />
+    <Compile Include="Util\ImageManipulation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

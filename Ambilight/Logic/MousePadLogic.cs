@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ambilight.GUI;
 using Corale.Colore.Core;
 using Corale.Colore.Razer.Mousepad.Effects;
 using Color = System.Drawing.Color;
@@ -15,9 +16,15 @@ namespace Ambilight.Logic
     /// Handles the Ambilight Effect for the mousepad
     /// </summary>
     class MousePadLogic
-    {        
-        
-       
+    {
+        private TraySettings settings;
+
+        public MousePadLogic(TraySettings settings)
+        {
+            this.settings = settings;
+        }
+
+
         /// <summary>
         /// Processes a ScreenShot and creates an Ambilight Effect for the mousepad
         /// </summary>
@@ -25,6 +32,7 @@ namespace Ambilight.Logic
         internal void Process(Bitmap newImage)
         {
             Bitmap mapMousePad = ImageManipulation.ResizeImage(newImage, 7, 6);
+            mapMousePad = ImageManipulation.ApplySaturation(mapMousePad, settings.Saturation);
             Custom mousePadGrid = Custom.Create();
             mousePadGrid = GenerateMousePadGrid(mapMousePad, mousePadGrid);
 

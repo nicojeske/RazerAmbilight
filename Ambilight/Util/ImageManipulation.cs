@@ -15,27 +15,28 @@ namespace Ambilight
         /// <returns>The resized image.</returns>
         public static Bitmap ResizeImage(Image image, int width, int height)
         {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
+            /* var destRect = new Rectangle(0, 0, width, height);
+             var destImage = new Bitmap(width, height);
 
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(destImage))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighSpeed;
-                graphics.InterpolationMode = InterpolationMode.Bicubic;
-                graphics.SmoothingMode = SmoothingMode.None;
-                graphics.PixelOffsetMode = PixelOffsetMode.None;
+             using (var graphics = Graphics.FromImage(destImage))
+             {
+                 graphics.CompositingMode = CompositingMode.SourceCopy;
+                 graphics.CompositingQuality = CompositingQuality.HighSpeed;
+                 graphics.InterpolationMode = InterpolationMode.Bicubic;
+                 graphics.SmoothingMode = SmoothingMode.None;
+                 graphics.PixelOffsetMode = PixelOffsetMode.None;
 
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
+                 using (var wrapMode = new ImageAttributes())
+                 {
+                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                 }
+             }
 
-            return destImage;
+             return destImage;*/
+            return new Bitmap(image, width, height);
         }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace Ambilight
                     ColorMatrixFlag.Default,
                     ColorAdjustType.Default);
                 // Draw Image with no effects
-                gr.DrawImage(srcBitmap, 0, 0, 200, 200);
+                //gr.DrawImage(srcBitmap, 0, 0, 200, 200);
                 // Draw Image with image attributes
                 gr.DrawImage(srcBitmap,
                     new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height),

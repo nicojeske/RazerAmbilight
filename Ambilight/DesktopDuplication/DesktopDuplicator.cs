@@ -90,7 +90,7 @@ namespace Ambilight.DesktopDuplication
 
         }
 
-        private const int mipMapLevel = 3;
+        private const int mipMapLevel = 2;
         private const int scalingFactor = 1 << mipMapLevel;
 
         private bool RetrieveFrame()

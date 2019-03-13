@@ -33,6 +33,7 @@ namespace Ambilight.Logic
         internal void Process(Bitmap newImage)
         {
             Bitmap map = ImageManipulation.ResizeImage(newImage, settings.KeyboardWidth, settings.KeyboardHeight);
+            map = ImageManipulation.ApplySaturation(map, settings.Saturation);
             _keyboardGrid = KeyboardCustom.Create();
             _keyboardGrid = GenerateKeyboardGrid(map, _keyboardGrid);
             Chroma.Instance.Keyboard.SetCustom(_keyboardGrid);            

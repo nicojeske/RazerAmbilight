@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,8 +32,8 @@ namespace Ambilight.Logic
             //Initializing Chroma SDK
             Chroma.Instance.Initialize();
             _keyboardLogic = new KeyboardLogic(settings);
-            _mousePadLogic = new MousePadLogic();
-            _mouseLogic = new MouseLogic();
+            _mousePadLogic = new MousePadLogic(settings);
+            _mouseLogic = new MouseLogic(settings);
 
             DesktopDuplicatorReader reader = new DesktopDuplicatorReader(this, settings);
 
@@ -48,16 +49,39 @@ namespace Ambilight.Logic
         /// Processes a captured Screenshot and create an Ambilight effect for the selected devices
         /// </summary>
         /// <param name="newImage"></param>
-        public void ProcessNewImage(Bitmap newImage)
+        public void ProcessNewImage(Bitmap test)
         {
-            newImage = ImageManipulation.ApplySaturation(newImage, settings.Saturation);
-            
-            if(settings.KeyboardEnabledBool)
+
+             
+             //newImage = ImageManipulation.ApplySaturation(newImage, settings.Saturation);
+             Bitmap newImage = new Bitmap(test);
+
+            if (settings.KeyboardEnabledBool)
                 _keyboardLogic.Process(newImage);
             if (settings.PadEnabledBool)
                 _mousePadLogic.Process(newImage);
             if (settings.MouseEnabledBool)
                 _mouseLogic.Process(newImage);
+
+           /* using (MemoryStream outStream = new MemoryStream())
+            {
+                using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
+                {                    
+                    imageFactory.Load(newImage).Saturation(100).Save(outStream);
+                    using (Bitmap image = new Bitmap(Image.FromStream(outStream)))
+                    {
+
+                        if (settings.KeyboardEnabledBool)
+                            _keyboardLogic.Process(image);
+                        if (settings.PadEnabledBool)
+                            _mousePadLogic.Process(image);
+                        if (settings.MouseEnabledBool)
+                            _mouseLogic.Process(image);
+
+                    }
+                }
+            }*/
+            
 
 
             newImage.Dispose();
