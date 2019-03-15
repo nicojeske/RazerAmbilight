@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Corale.Colore.Core;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Corale;
-using Corale.Colore.Core;
-using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 using ColoreColor = Corale.Colore.Core.Color;
+using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 
 
 namespace Ambilight.Logic
@@ -47,16 +41,26 @@ namespace Ambilight.Logic
         /// <returns>EffectGrid</returns>
         private KeyboardCustom GenerateKeyboardGrid(Bitmap map, KeyboardCustom keyboardGrid)
         {
-            //Iterating over each key and set it to the corrosponding color of the resized Screenshot
-            for (var r = 0; r < settings.KeyboardHeight; r++)
-            {
-                for (var c = 0; c < settings.KeyboardWidth; c++)
-                {
-                    System.Drawing.Color color = map.GetPixel(c, r);
 
-                    keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+
+            //Iterating over each key and set it to the corrosponding color of the resized Screenshot
+
+            for (var r = 0; r < settings.KeyboardHeight; r++)
+                {
+                    for (var c = 0; c < settings.KeyboardWidth; c++)
+                    {
+                        System.Drawing.Color color;
+
+                    if (settings.AmbiModeBool)
+                        color = map.GetPixel(c, settings.KeyboardHeight - 1);
+                    else
+                        color = map.GetPixel(c, r);
+
+                        keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                    }
                 }
-            }
+
+            
 
             return keyboardGrid;
         }

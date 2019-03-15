@@ -24,6 +24,8 @@ namespace Ambilight.GUI
         public bool KeyboardEnabledBool { get; private set; }
         public bool MouseEnabledBool { get; private set; }
         public bool PadEnabledBool { get; private set; }
+
+        public bool AmbiModeBool { get; private set; }
        
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -110,12 +112,22 @@ namespace Ambilight.GUI
                Properties.Settings.Default.Save();
            });
 
+            MenuItem _ambiModeEnabled = new MenuItem("'Real' Ambilight mode", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.ambiEnabled = (sender as MenuItem).Checked;
+                AmbiModeBool = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
+
             _keyboardEnabled.Checked = Properties.Settings.Default.keyboardEnabled;
             KeyboardEnabledBool = Properties.Settings.Default.keyboardEnabled;
             _mouseEnabled.Checked = Properties.Settings.Default.mouseEnabled;
             MouseEnabledBool = Properties.Settings.Default.mouseEnabled;
             _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
             PadEnabledBool = Properties.Settings.Default.mousematEnabled;
+            _ambiModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
+            AmbiModeBool = Properties.Settings.Default.ambiEnabled;
 
 
             var components = new System.ComponentModel.Container();
@@ -124,6 +136,8 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add("Change max fps", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
             contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);
+            contextMenu.MenuItems.Add("-");
+            contextMenu.MenuItems.Add(_ambiModeEnabled);
             contextMenu.MenuItems.Add("-");
 
             contextMenu.MenuItems.Add(_keyboardEnabled);

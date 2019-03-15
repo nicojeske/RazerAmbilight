@@ -33,6 +33,9 @@ namespace Ambilight.Logic
             var mouseGrid = Corale.Colore.Razer.Mouse.Effects.CustomGrid.Create();
             Bitmap mapMouse = ImageManipulation.ResizeImage(newImage, Corale.Colore.Razer.Mouse.Constants.MaxColumns,
                     Corale.Colore.Razer.Mouse.Constants.MaxRows);
+
+            
+
             mouseGrid = GenerateMouseGrid(mapMouse, mouseGrid);
             Chroma.Instance.Mouse.SetGrid(mouseGrid);
             mapMouse.Dispose();
@@ -46,11 +49,19 @@ namespace Ambilight.Logic
         /// <returns>EffectGrid</returns>
         private CustomGrid GenerateMouseGrid(Bitmap mapMouse, CustomGrid mouseGrid)
         {
+
             for (var r = 0; r < Corale.Colore.Razer.Mouse.Constants.MaxRows; r++)
             {
                 for (var c = 0; c < Corale.Colore.Razer.Mouse.Constants.MaxColumns; c++)
                 {
-                    System.Drawing.Color color = mapMouse.GetPixel(c, r);
+                    System.Drawing.Color color;
+
+                    if (settings.AmbiModeBool)
+                        color = mapMouse.GetPixel(6, 8);
+                    else
+                        color = mapMouse.GetPixel(c, r);
+
+
                     mouseGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
             }
