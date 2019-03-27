@@ -151,10 +151,10 @@ namespace Ambilight.GUI
                 Visible = true
             };
 
-            logger.Info("Keyboard Enabled: " + _keyboardEnabled);
-            logger.Info("Mouse Enabled: " + _mouseEnabled);
-            logger.Info("Mousemat Enabled: " + _mousematEnabled);
-            logger.Info("Ambilight mode: " + _ambiModeEnabled);
+            logger.Info("Keyboard Enabled: " + _keyboardEnabled.Checked);
+            logger.Info("Mouse Enabled: " + _mouseEnabled.Checked);
+            logger.Info("Mousemat Enabled: " + _mousematEnabled.Checked);
+            logger.Info("Ambilight mode: " + _ambiModeEnabled.Checked);
 
             notifyIcon.ContextMenu = contextMenu;
             Application.Run();
