@@ -63,24 +63,7 @@ namespace Ambilight.Logic
             if (settings.MouseEnabledBool)
                 _mouseLogic.Process(newImage);
 
-           /* using (MemoryStream outStream = new MemoryStream())
-            {
-                using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
-                {                    
-                    imageFactory.Load(newImage).Saturation(100).Save(outStream);
-                    using (Bitmap image = new Bitmap(Image.FromStream(outStream)))
-                    {
-
-                        if (settings.KeyboardEnabledBool)
-                            _keyboardLogic.Process(image);
-                        if (settings.PadEnabledBool)
-                            _mousePadLogic.Process(image);
-                        if (settings.MouseEnabledBool)
-                            _mouseLogic.Process(image);
-
-                    }
-                }
-            }*/
+         
             
 
 

@@ -33,9 +33,7 @@ namespace Ambilight.Logic
             var mouseGrid = Corale.Colore.Razer.Mouse.Effects.CustomGrid.Create();
             Bitmap mapMouse = ImageManipulation.ResizeImage(newImage, Corale.Colore.Razer.Mouse.Constants.MaxColumns,
                     Corale.Colore.Razer.Mouse.Constants.MaxRows);
-
-            
-
+            mapMouse = ImageManipulation.ApplySaturation(mapMouse, settings.Saturation);            
             mouseGrid = GenerateMouseGrid(mapMouse, mouseGrid);
             Chroma.Instance.Mouse.SetGrid(mouseGrid);
             mapMouse.Dispose();
