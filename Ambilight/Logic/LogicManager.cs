@@ -17,8 +17,7 @@ namespace Ambilight.Logic
     /// This Class manages the Logic of the software. Handling the settings, Image Manipulation and logic functions
     /// </summary>
     class LogicManager
-    {
-        
+    {        
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
         private KeyboardLogic _keyboardLogic;
         private MousePadLogic _mousePadLogic;
@@ -36,14 +35,12 @@ namespace Ambilight.Logic
             _mouseLogic = new MouseLogic(settings);
 
             DesktopDuplicatorReader reader = new DesktopDuplicatorReader(this, settings);
-
-
+            
             while (true)
             {
                 Thread.Sleep(1000 / settings.Tickrate);
             }
         }
-
         
         /// <summary>
         /// Processes a captured Screenshot and create an Ambilight effect for the selected devices
@@ -51,8 +48,6 @@ namespace Ambilight.Logic
         /// <param name="newImage"></param>
         public void ProcessNewImage(Bitmap test)
         {
-
-             
              //newImage = ImageManipulation.ApplySaturation(newImage, settings.Saturation);
              Bitmap newImage = new Bitmap(test);
 
@@ -62,10 +57,6 @@ namespace Ambilight.Logic
                 _mousePadLogic.Process(newImage);
             if (settings.MouseEnabledBool)
                 _mouseLogic.Process(newImage);
-
-         
-            
-
 
             newImage.Dispose();
         }
