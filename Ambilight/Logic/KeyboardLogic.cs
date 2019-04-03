@@ -26,7 +26,7 @@ namespace Ambilight.Logic
         /// <param name="newImage">ScreenShot</param>
         internal void Process(Bitmap newImage)
         {
-            Bitmap map = ImageManipulation.ResizeImage(newImage, settings.KeyboardWidth, settings.KeyboardHeight);
+            Bitmap map = ImageManipulation.ResizeImage(newImage, settings.KeyboardWidth, settings.KeyboardHeight, settings.UltrawideModeBool);
             map = ImageManipulation.ApplySaturation(map, settings.Saturation);
             _keyboardGrid = KeyboardCustom.Create();
             _keyboardGrid = GenerateKeyboardGrid(map, _keyboardGrid);
@@ -41,26 +41,21 @@ namespace Ambilight.Logic
         /// <returns>EffectGrid</returns>
         private KeyboardCustom GenerateKeyboardGrid(Bitmap map, KeyboardCustom keyboardGrid)
         {
-
-
             //Iterating over each key and set it to the corrosponding color of the resized Screenshot
-
             for (var r = 0; r < settings.KeyboardHeight; r++)
+            {
+                for (var c = 0; c < settings.KeyboardWidth; c++)
                 {
-                    for (var c = 0; c < settings.KeyboardWidth; c++)
-                    {
-                        System.Drawing.Color color;
+                    System.Drawing.Color color;
 
                     if (settings.AmbiModeBool)
                         color = map.GetPixel(c, settings.KeyboardHeight - 1);
                     else
                         color = map.GetPixel(c, r);
 
-                        keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-                    }
+                    keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
-
-            
+            }            
 
             return keyboardGrid;
         }

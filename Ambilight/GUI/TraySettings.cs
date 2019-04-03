@@ -24,9 +24,9 @@ namespace Ambilight.GUI
         public bool KeyboardEnabledBool { get; private set; }
         public bool MouseEnabledBool { get; private set; }
         public bool PadEnabledBool { get; private set; }
-
         public bool AmbiModeBool { get; private set; }
-       
+        public bool UltrawideModeBool { get; private set; }
+
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
 
@@ -51,8 +51,6 @@ namespace Ambilight.GUI
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
 
-
-
                 if (_keyboardWidthProperty >= 0)
                 {
                     KeyboardWidth = _keyboardWidthProperty;
@@ -67,56 +65,56 @@ namespace Ambilight.GUI
             {
                 Tickrate = 5;
                 Saturation = 1f;
-            }
-
-            
+            }                       
 
             logger.Info("Keyboard width: " + KeyboardWidth);
             logger.Info("Keyboard height: " + KeyboardHeight);
             logger.Info("Max FPS: " + Tickrate);
-            logger.Info("Saturation: " + Saturation);
-         
-
+            logger.Info("Saturation: " + Saturation);   
         }
 
         /// <summary>
         /// Initializes the tray icons
         /// </summary>
         private void InitializeTray()
-        {
-            
-           MenuItem _keyboardEnabled = new MenuItem("Keyboard enabled", (sender, args) =>
-               {
-                   EnableMenuItemOnClick(sender, args);
-                   Properties.Settings.Default.keyboardEnabled = (sender as MenuItem).Checked;
-                   KeyboardEnabledBool = (sender as MenuItem).Checked;
-                   Properties.Settings.Default.Save();
-               });
-
+        {            
+            MenuItem _keyboardEnabled = new MenuItem("Keyboard enabled", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.keyboardEnabled = (sender as MenuItem).Checked;
+                KeyboardEnabledBool = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
 
             MenuItem _mouseEnabled = new MenuItem("Mouse enabled", (sender, args) =>
-           {
-               EnableMenuItemOnClick(sender, args);
-               Properties.Settings.Default.mouseEnabled = (sender as MenuItem).Checked;
-               MouseEnabledBool = (sender as MenuItem).Checked;
-               Properties.Settings.Default.Save();
-           });
-
-
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.mouseEnabled = (sender as MenuItem).Checked;
+                MouseEnabledBool = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
 
             MenuItem _mousematEnabled = new MenuItem("Mousemat enabled", (sender, args) =>
-           {
-               EnableMenuItemOnClick(sender, args);
-               Properties.Settings.Default.mousematEnabled = (sender as MenuItem).Checked;
-               PadEnabledBool = (sender as MenuItem).Checked;
-               Properties.Settings.Default.Save();
-           });
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.mousematEnabled = (sender as MenuItem).Checked;
+                PadEnabledBool = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
 
             MenuItem _ambiModeEnabled = new MenuItem("'Real' Ambilight mode", (sender, args) =>
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.ambiEnabled = (sender as MenuItem).Checked;
                 AmbiModeBool = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
+
+            MenuItem _ultrawideModeEnabled = new MenuItem("Ultrawide Monitor mode", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.ultrawideEnabled = (sender as MenuItem).Checked;
+                UltrawideModeBool = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -128,16 +126,19 @@ namespace Ambilight.GUI
             PadEnabledBool = Properties.Settings.Default.mousematEnabled;
             _ambiModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
             AmbiModeBool = Properties.Settings.Default.ambiEnabled;
-
+            _ultrawideModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
+            UltrawideModeBool = Properties.Settings.Default.ultrawideEnabled;
 
             var components = new System.ComponentModel.Container();
             var contextMenu = new ContextMenu();
+
             contextMenu.MenuItems.Add("Exit", (sender, args) => Environment.Exit(0));
             contextMenu.MenuItems.Add("Change max fps", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
-            contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);
+            contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);            
             contextMenu.MenuItems.Add("-");
             contextMenu.MenuItems.Add(_ambiModeEnabled);
+            contextMenu.MenuItems.Add(_ultrawideModeEnabled);
             contextMenu.MenuItems.Add("-");
 
             contextMenu.MenuItems.Add(_keyboardEnabled);
@@ -155,6 +156,7 @@ namespace Ambilight.GUI
             logger.Info("Mouse Enabled: " + _mouseEnabled.Checked);
             logger.Info("Mousemat Enabled: " + _mousematEnabled.Checked);
             logger.Info("Ambilight mode: " + _ambiModeEnabled.Checked);
+            logger.Info("Ultrawide mode: " + _ultrawideModeEnabled.Checked);
 
             notifyIcon.ContextMenu = contextMenu;
             Application.Run();
@@ -170,8 +172,6 @@ namespace Ambilight.GUI
             MenuItem item = sender as MenuItem;
             item.Checked = !item.Checked;
         }
-
-
         
         private void changeKeyboardSizeHandler(object sender, EventArgs e)
         {
@@ -188,8 +188,6 @@ namespace Ambilight.GUI
             Properties.Settings.Default.keyboardHeight = KeyboardHeight;
             Properties.Settings.Default.Save();
         }
-
-
 
         /// <summary>
         /// Enables the user to manually change the saturation

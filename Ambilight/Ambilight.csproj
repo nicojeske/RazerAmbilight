@@ -185,6 +185,7 @@
     <Compile Include="GUI\SaturationControl.Designer.cs">
       <DependentUpon>SaturationControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\FpsLogger.cs" />
     <Compile Include="Util\ImageManipulation.cs" />
   </ItemGroup>
@@ -219,8 +220,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Color_Wheel.ico" />
-    <Content Include="FodyWeavers.xml" />
+    <Content Include="Color_Wheel.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FodyWeavers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUI\KeyboardSizeControl.resx">
