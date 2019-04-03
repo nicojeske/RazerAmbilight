@@ -1,4 +1,5 @@
 ﻿using Corale.Colore.Core;
+using System;
 using System.Drawing;
 using ColoreColor = Corale.Colore.Core.Color;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
