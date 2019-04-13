@@ -51,14 +51,25 @@ namespace Ambilight.GUI
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
 
-                if (_keyboardWidthProperty >= 0)
-                {
+               
+
+
+                if (_keyboardWidthProperty >= 0 && _keyboardWidthProperty < Corale.Colore.Razer.Keyboard.Constants.MaxColumns)
+                {                   
                     KeyboardWidth = _keyboardWidthProperty;
+                } else
+                {
+                    logger.Warn("Invalid keyboardWidth changing back to default value");
+                    KeyboardWidth = Corale.Colore.Razer.Keyboard.Constants.MaxColumns;
                 }
 
-                if (_keyboardHeightProperty >= 0)
+                if (_keyboardHeightProperty >= 0 && _keyboardHeightProperty < Corale.Colore.Razer.Keyboard.Constants.MaxRows)
                 {
                     KeyboardHeight = _keyboardHeightProperty;
+                } else
+                {
+                    logger.Warn("Invalid keyboardHeight changing back to default value");
+                    KeyboardHeight = Corale.Colore.Razer.Keyboard.Constants.MaxRows;
                 }
             }
             catch (SettingsPropertyNotFoundException)
@@ -182,11 +193,23 @@ namespace Ambilight.GUI
         private void keyboardSizeChangedHandler(object sender, EventArgs e)
         {
             KeyboardSizeControl k = sender as KeyboardSizeControl;
-            KeyboardWidth = k.GetTxtWidth();
-            KeyboardHeight = k.GetTxtHeight();
-            Properties.Settings.Default.keyboardWidth = KeyboardWidth;
-            Properties.Settings.Default.keyboardHeight = KeyboardHeight;
+            int KeyboardWidthSetting = k.GetTxtWidth();
+            int KeyboardHeightSetting = k.GetTxtHeight();
+
+            if (KeyboardWidthSetting < 0 || KeyboardWidthSetting > Corale.Colore.Razer.Keyboard.Constants.MaxColumns || KeyboardHeightSetting < 0 || KeyboardHeightSetting > Corale.Colore.Razer.Keyboard.Constants.MaxRows)
+            {
+                k.errorReport("Input invalid");
+                return;
+            }
+
+            KeyboardHeight = KeyboardHeightSetting;
+            KeyboardWidth = KeyboardWidthSetting;
+
+
+            Properties.Settings.Default.keyboardWidth = KeyboardWidthSetting;
+            Properties.Settings.Default.keyboardHeight = KeyboardHeightSetting;
             Properties.Settings.Default.Save();
+
         }
 
         /// <summary>

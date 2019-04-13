@@ -1,5 +1,4 @@
 ﻿using Corale.Colore.Core;
-using System;
 using System.Drawing;
 using ColoreColor = Corale.Colore.Core.Color;
 using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
@@ -18,7 +17,7 @@ namespace Ambilight.Logic
 
         public KeyboardLogic(GUI.TraySettings settings)
         {
-            this.settings = settings;            
+            this.settings = settings;
         }
 
         /// <summary>
@@ -29,9 +28,9 @@ namespace Ambilight.Logic
         {
             Bitmap map = ImageManipulation.ResizeImage(newImage, settings.KeyboardWidth, settings.KeyboardHeight, settings.UltrawideModeBool);
             map = ImageManipulation.ApplySaturation(map, settings.Saturation);
-            _keyboardGrid = KeyboardCustom.Create();
+            _keyboardGrid = KeyboardCustom.Create();            
             _keyboardGrid = GenerateKeyboardGrid(map, _keyboardGrid);
-            Chroma.Instance.Keyboard.SetCustom(_keyboardGrid);            
+            Chroma.Instance.Keyboard.SetCustom(_keyboardGrid);
         }
 
         /// <summary>
@@ -50,13 +49,17 @@ namespace Ambilight.Logic
                     System.Drawing.Color color;
 
                     if (settings.AmbiModeBool)
+                    {
                         color = map.GetPixel(c, settings.KeyboardHeight - 1);
+                    }
                     else
+                    {
                         color = map.GetPixel(c, r);
+                    }
 
                     keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
-            }            
+            }
 
             return keyboardGrid;
         }
