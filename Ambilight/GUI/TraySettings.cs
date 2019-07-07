@@ -28,7 +28,7 @@ namespace Ambilight.GUI
         public bool PadEnabledBool { get; private set; }
         public bool AmbiModeBool { get; private set; }
         public bool UltrawideModeBool { get; private set; }
-        public bool Autostart { get; private set; }
+        public bool AutostartEnabledBool { get; private set; }
 
         private NotifyIcon notifyIcon;
 
@@ -55,7 +55,7 @@ namespace Ambilight.GUI
                 Saturation = Properties.Settings.Default.saturation;
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
-                Autostart = Properties.Settings.Default.autostartEnabled;
+                AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
 
                
 
@@ -82,8 +82,9 @@ namespace Ambilight.GUI
             {
                 Tickrate = 5;
                 Saturation = 1f;
-            }                       
+            }
 
+            logger.Info("Autostart: " + AutostartEnabledBool);
             logger.Info("Keyboard width: " + KeyboardWidth);
             logger.Info("Keyboard height: " + KeyboardHeight);
             logger.Info("Max FPS: " + Tickrate);
@@ -140,7 +141,7 @@ namespace Ambilight.GUI
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.autostartEnabled = (sender as MenuItem).Checked;
                 changeAutoStart();
-                Autostart = (sender as MenuItem).Checked;
+                AutostartEnabledBool = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -155,7 +156,7 @@ namespace Ambilight.GUI
             _ultrawideModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
             UltrawideModeBool = Properties.Settings.Default.ultrawideEnabled;
             _autostart.Checked = checkAutostart(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "/Ambilight.lnk");
-            Autostart = Properties.Settings.Default.autostartEnabled;
+            AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
 
             var components = new System.ComponentModel.Container();
             var contextMenu = new ContextMenu();
