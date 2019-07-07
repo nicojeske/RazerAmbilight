@@ -1,9 +1,11 @@
-﻿using Microsoft.VisualBasic;
+﻿using IWshRuntimeLibrary;
+using Microsoft.VisualBasic;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -26,6 +28,9 @@ namespace Ambilight.GUI
         public bool PadEnabledBool { get; private set; }
         public bool AmbiModeBool { get; private set; }
         public bool UltrawideModeBool { get; private set; }
+        public bool AutostartEnabledBool { get; private set; }
+
+        private NotifyIcon notifyIcon;
 
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -50,6 +55,7 @@ namespace Ambilight.GUI
                 Saturation = Properties.Settings.Default.saturation;
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
+                AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
 
                
 
@@ -76,8 +82,9 @@ namespace Ambilight.GUI
             {
                 Tickrate = 5;
                 Saturation = 1f;
-            }                       
+            }
 
+            logger.Info("Autostart: " + AutostartEnabledBool);
             logger.Info("Keyboard width: " + KeyboardWidth);
             logger.Info("Keyboard height: " + KeyboardHeight);
             logger.Info("Max FPS: " + Tickrate);
@@ -129,6 +136,15 @@ namespace Ambilight.GUI
                 Properties.Settings.Default.Save();
             });
 
+            MenuItem _autostart = new MenuItem("Autostart", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.autostartEnabled = (sender as MenuItem).Checked;
+                changeAutoStart();
+                AutostartEnabledBool = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
+
             _keyboardEnabled.Checked = Properties.Settings.Default.keyboardEnabled;
             KeyboardEnabledBool = Properties.Settings.Default.keyboardEnabled;
             _mouseEnabled.Checked = Properties.Settings.Default.mouseEnabled;
@@ -139,24 +155,27 @@ namespace Ambilight.GUI
             AmbiModeBool = Properties.Settings.Default.ambiEnabled;
             _ultrawideModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
             UltrawideModeBool = Properties.Settings.Default.ultrawideEnabled;
+            _autostart.Checked = checkAutostart(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "/Ambilight.lnk");
+            AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
 
             var components = new System.ComponentModel.Container();
             var contextMenu = new ContextMenu();
 
-            contextMenu.MenuItems.Add("Exit", (sender, args) => Environment.Exit(0));
+            contextMenu.MenuItems.Add("Exit", (sender, args) => { notifyIcon.Dispose();Environment.Exit(0); });
             contextMenu.MenuItems.Add("Change max fps", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
             contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);            
             contextMenu.MenuItems.Add("-");
             contextMenu.MenuItems.Add(_ambiModeEnabled);
             contextMenu.MenuItems.Add(_ultrawideModeEnabled);
+            contextMenu.MenuItems.Add(_autostart);
             contextMenu.MenuItems.Add("-");
 
             contextMenu.MenuItems.Add(_keyboardEnabled);
             contextMenu.MenuItems.Add(_mouseEnabled);
             contextMenu.MenuItems.Add(_mousematEnabled);
 
-            var notifyIcon = new NotifyIcon(components)
+             notifyIcon = new NotifyIcon(components)
             {
                 Icon = new Icon("Color_Wheel.ico"),
                 Text = "Razer Ambilight",
@@ -173,6 +192,8 @@ namespace Ambilight.GUI
             Application.Run();
         }
 
+
+
         /// <summary>
         /// Enables a MenuItem to be checkable
         /// </summary>
@@ -183,7 +204,43 @@ namespace Ambilight.GUI
             MenuItem item = sender as MenuItem;
             item.Checked = !item.Checked;
         }
-        
+        /// <summary>
+        /// Enables or disables autostart
+        /// </summary>
+        /// <returns>True if autostart got enabled. False if autostart got disabled</returns>
+        private bool changeAutoStart()
+        {
+            string shortcutPath= Environment.GetFolderPath(Environment.SpecialFolder.Startup)+"/Ambilight.lnk";
+            if(checkAutostart(shortcutPath))
+            {
+                System.IO.File.Delete(shortcutPath);
+                return false;
+            }
+            else
+            {
+                WshShell shell = new WshShell();
+                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "/Ambilight.lnk");
+                shortcut.Description = "Ambilight for Razer devices";
+                shortcut.TargetPath= System.IO.Path.GetDirectoryName(Application.ExecutablePath)+"/Ambilight.exe";
+                shortcut.WorkingDirectory= System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+                shortcut.Save();
+                return true;
+            }
+            
+
+        }
+        /// <summary>
+        /// Checks if autostart is enabled or not
+        /// </summary>
+        /// <param name="shortcutPath">The Filepath of the shortcut</param>
+        /// <returns>True if autostart is enabled. False if autostart is not enabled</returns>
+        private bool checkAutostart(string shortcutPath)
+        {
+            if (System.IO.File.Exists(shortcutPath))
+                return true;
+            else
+                return false;
+        }
         private void changeKeyboardSizeHandler(object sender, EventArgs e)
         {
             KeyboardSizeControl k = new KeyboardSizeControl(keyboardSizeChangedHandler, KeyboardWidth, KeyboardHeight);
