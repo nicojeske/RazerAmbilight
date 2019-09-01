@@ -47,7 +47,7 @@ namespace Ambilight.DesktopDuplication
                 var thread = new Thread(() => Run(_cancellationTokenSource.Token))
                 {
                     IsBackground = true,
-                    Priority = ThreadPriority.BelowNormal,
+                    Priority = ThreadPriority.Normal,
                     Name = "DesktopDuplicatorReader"
                 };
                 thread.Start();
@@ -80,7 +80,7 @@ namespace Ambilight.DesktopDuplication
 
                     _logic.ProcessNewImage(newImage);
 
-                    int minFrameTimeInMs = 1000 / settings.Tickrate; //1000/FPS
+                    int minFrameTimeInMs = 1; //1000/FPS
                     var elapsedMs = (int)frameTime.ElapsedMilliseconds;
                     if (elapsedMs < minFrameTimeInMs)
                     {
