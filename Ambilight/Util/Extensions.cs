@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace Ambilight.Util
 {
     public static class Extensions
     {
-        public static Bitmap CropAtRectangle(this Bitmap b, Rectangle r)
+        public static Bitmap CropAtRectangle(this Bitmap bitmap, Rectangle rectangle)
         {
-            Bitmap nb = new Bitmap(r.Width, r.Height);
-            using (Graphics g = Graphics.FromImage(nb))
+            Bitmap newBitmap = new Bitmap(rectangle.Width, rectangle.Height);
+            using (Graphics g = Graphics.FromImage(newBitmap))
             {
-                g.DrawImage(b, -r.X, -r.Y);
-                nb.SetResolution(r.Width, r.Height);
-                return nb;
-            }                    
+                g.DrawImage(bitmap, -rectangle.X, -rectangle.Y);
+                bitmap.Dispose();
+                newBitmap.SetResolution(rectangle.Width, rectangle.Height);
+                return newBitmap;
+            }
         }
     }
 }
