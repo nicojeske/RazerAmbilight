@@ -121,8 +121,6 @@ namespace Ambilight.GUI
                 Properties.Settings.Default.Save();
             });
 
-           
-
             MenuItem _ambiModeEnabled = new MenuItem("'Real' Ambilight mode", (sender, args) =>
             {
                 EnableMenuItemOnClick(sender, args);
