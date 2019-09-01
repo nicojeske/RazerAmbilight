@@ -107,7 +107,7 @@ namespace Ambilight.DesktopDuplication
         {
             if (_desktopDuplicator == null)
             {
-                _desktopDuplicator = new DesktopDuplicator(0, 0);
+                _desktopDuplicator = new DesktopDuplicator(0, settings.Monitor);
             }
 
             try

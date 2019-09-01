@@ -24,6 +24,7 @@ namespace Ambilight.GUI
         public bool KeyboardEnabledBool { get; private set; }
         public bool MouseEnabledBool { get; private set; }
         public bool PadEnabledBool { get; private set; }
+        public int Monitor { get; set; }
        
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -109,6 +110,8 @@ namespace Ambilight.GUI
                PadEnabledBool = (sender as MenuItem).Checked;
                Properties.Settings.Default.Save();
            });
+            MenuItem _monitor = new MenuItem("Change Monitor");
+            Monitor = Properties.Settings.Default.monitor;
 
             _keyboardEnabled.Checked = Properties.Settings.Default.keyboardEnabled;
             KeyboardEnabledBool = Properties.Settings.Default.keyboardEnabled;
@@ -124,6 +127,7 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add("Change max fps", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
             contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);
+            contextMenu.MenuItems.Add("Change Monitor", changeMonitorHandler);
             contextMenu.MenuItems.Add("-");
 
             contextMenu.MenuItems.Add(_keyboardEnabled);
@@ -139,6 +143,20 @@ namespace Ambilight.GUI
 
             notifyIcon.ContextMenu = contextMenu;
             Application.Run();
+        }
+
+        private void changeMonitorHandler(object sender, EventArgs e)
+        {
+            Monitor monitorWindow = new Monitor(monitorChangedHandler);
+            monitorWindow.Show();
+        }
+        private void monitorChangedHandler(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.monitor = ((ComboBox)sender).SelectedIndex;
+            Properties.Settings.Default.Save();
+            DialogResult result=MessageBox.Show("The application must be restarted to apply this change. Do you want to restart now ?", "Restart required", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+                Application.Restart();
         }
 
         /// <summary>
