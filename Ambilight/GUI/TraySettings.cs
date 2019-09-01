@@ -29,6 +29,7 @@ namespace Ambilight.GUI
         public bool AmbiModeBool { get; private set; }
         public bool UltrawideModeBool { get; private set; }
         public bool AutostartEnabledBool { get; private set; }
+        public int Monitor { get; set; }
 
         private NotifyIcon notifyIcon;
 
@@ -56,7 +57,7 @@ namespace Ambilight.GUI
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
                 AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
-
+                Monitor = Properties.Settings.Default.monitor;
                
 
 
@@ -164,7 +165,8 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add("Exit", (sender, args) => { notifyIcon.Dispose();Environment.Exit(0); });
             contextMenu.MenuItems.Add("Change max fps", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
-            contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);            
+            contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);
+            contextMenu.MenuItems.Add("Change Monitor", changeMonitorHandler);
             contextMenu.MenuItems.Add("-");
             contextMenu.MenuItems.Add(_ambiModeEnabled);
             contextMenu.MenuItems.Add(_ultrawideModeEnabled);
@@ -192,7 +194,24 @@ namespace Ambilight.GUI
             Application.Run();
         }
 
-
+        private void changeMonitorHandler(object sender, EventArgs e)
+        {
+            Monitor monitorWindow = new Monitor(monitorChangedHandler,Properties.Settings.Default.monitor);
+            monitorWindow.Show();
+        }
+        private void monitorChangedHandler(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.monitor = ((ComboBox)sender).SelectedIndex;
+            Properties.Settings.Default.Save();
+            DialogResult result=MessageBox.Show("The application must be restarted to apply this change. Do you want to restart now ?", "Restart required", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                notifyIcon.Dispose();
+                System.Diagnostics.Process.Start(Application.ExecutablePath);
+                Environment.Exit(0);
+            }
+                
+        }
 
         /// <summary>
         /// Enables a MenuItem to be checkable
