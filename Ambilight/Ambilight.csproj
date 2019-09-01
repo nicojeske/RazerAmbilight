@@ -195,6 +195,7 @@
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\FpsLogger.cs" />
     <Compile Include="Util\ImageManipulation.cs" />
+    <Compile Include="Util\ScreenInterrogatory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

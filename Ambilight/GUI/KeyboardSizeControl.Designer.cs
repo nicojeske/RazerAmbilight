@@ -54,6 +54,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.SystemColors.Control;
             this.label1.Location = new System.Drawing.Point(12, 17);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(113, 13);
@@ -64,6 +65,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.SystemColors.Control;
             this.label2.Location = new System.Drawing.Point(12, 40);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 13);
@@ -75,6 +77,7 @@
             // 
             this.saveBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.saveBtn.Enabled = false;
+            this.saveBtn.ForeColor = System.Drawing.SystemColors.Control;
             this.saveBtn.Location = new System.Drawing.Point(189, 13);
             this.saveBtn.Name = "saveBtn";
             this.saveBtn.Size = new System.Drawing.Size(114, 21);
@@ -85,6 +88,7 @@
             // 
             // button1
             // 
+            this.button1.ForeColor = System.Drawing.SystemColors.Control;
             this.button1.Location = new System.Drawing.Point(189, 40);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(114, 20);
@@ -97,6 +101,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.GrayText;
             this.ClientSize = new System.Drawing.Size(315, 74);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.saveBtn);
