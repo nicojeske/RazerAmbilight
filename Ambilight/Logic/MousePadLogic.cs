@@ -42,33 +42,69 @@ namespace Ambilight.Logic
 
         /// <summary>
         /// From a given resized screenshot, an ambilight effect will be created for the mousepad
+        ///^->>i
+        ///^   V
+        ///^   V
+        ///<<<<V
+        ///  
         /// </summary>
         /// <param name="mapMousePad">resized screenshot</param>
         /// <param name="mousePadGrid">effect grid</param>
         /// <returns></returns>
         private Custom GenerateMousePadGrid(Bitmap mapMousePad, Custom mousePadGrid)
         {
-           
-            for (int i = 0; i < 4; i++)
+
+            if (!settings.AmbiModeBool)
             {
-                Color color = mapMousePad.GetPixel(6, i);
-                mousePadGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                for (int i = 0; i < 4; i++)
+                {
+                    Color color = mapMousePad.GetPixel(6, i);
+                    mousePadGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                }
+
+                Color colorC = mapMousePad.GetPixel(6, 4);
+                mousePadGrid[4] = new ColoreColor((byte)colorC.R, (byte)colorC.G, (byte)colorC.B);
+
+                for (int i = 5; i >= 0; i--)
+                {
+                    Color color = mapMousePad.GetPixel(i, 5);
+                    mousePadGrid[10 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                }
+
+                for (int i = 3; i >= 0; i--)
+                {
+                    Color color = mapMousePad.GetPixel(0, i);
+                    mousePadGrid[14 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                }
+            } else
+            {
+                //RIGHT
+                for (int i = 0; i < 4; i++)
+                {
+                    Color color = mapMousePad.GetPixel(6, 5);
+                    mousePadGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                }
+
+                //RIGHT DOWN CORNOR
+                Color colorC = mapMousePad.GetPixel(6, 5);
+                mousePadGrid[4] = new ColoreColor((byte)colorC.R, (byte)colorC.G, (byte)colorC.B);
+
+                //BOTTOM
+                for (int i = 5; i >= 0; i--)
+                {
+                    Color color = mapMousePad.GetPixel(5, 5);
+                    mousePadGrid[10 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                }
+
+                ///CORNER + LEFT
+                for (int i = 3; i >= 0; i--)
+                {
+                    Color color = mapMousePad.GetPixel(4, 5);
+                    mousePadGrid[14 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                }
             }
 
-            Color colorC = mapMousePad.GetPixel(6, 4);
-            mousePadGrid[4] = new ColoreColor((byte)colorC.R, (byte)colorC.G, (byte)colorC.B);
-
-            for (int i = 5; i >= 0; i--)
-            {
-                Color color = mapMousePad.GetPixel(i, 5);
-                mousePadGrid[10 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-            }
-
-            for (int i = 3; i >= 0; i--)
-            {
-                Color color = mapMousePad.GetPixel(0, i);
-                mousePadGrid[14 - i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-            }
+            
 
 
             return mousePadGrid;

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using KeyboardConstants = Corale.Colore.Razer.Keyboard.Constants;
 
 namespace Ambilight
 {
@@ -31,7 +32,8 @@ namespace Ambilight
 
         private void LocalValuesChangedEventHandler(object sender, EventArgs e)
         {
-            if (int.TryParse(widthTxt.Text, out var outWidth) && int.TryParse(heightTxt.Text, out var outHeight) && outWidth > 0 && outHeight > 0)
+
+            if (int.TryParse(widthTxt.Text, out var outWidth) && int.TryParse(heightTxt.Text, out var outHeight) && outWidth > 0 && outHeight > 0 && outWidth <= KeyboardConstants.MaxColumns && outHeight <= KeyboardConstants.MaxRows) 
             {
        
                 this.saveBtn.Enabled = true;
@@ -65,6 +67,11 @@ namespace Ambilight
             this.widthTxt.Text = Corale.Colore.Razer.Keyboard.Constants.MaxColumns.ToString();
             this.heightTxt.Text = Corale.Colore.Razer.Keyboard.Constants.MaxRows.ToString();
             saveBtn_Click(this, null);
+        }
+
+        public void errorReport (String msg)
+        {
+            MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

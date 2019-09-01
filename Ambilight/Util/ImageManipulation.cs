@@ -1,11 +1,16 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using Ambilight.Util;
+using NLog;
 
 namespace Ambilight
 {
     class ImageManipulation
     {
+
+        private static Logger _log = LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Resize an image to the specified width and height.
         /// </summary>
@@ -13,29 +18,25 @@ namespace Ambilight
         /// <param name="width">The width to resize to.</param>
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
-        public static Bitmap ResizeImage(Image image, int width, int height)
-        {
-            /* var destRect = new Rectangle(0, 0, width, height);
-             var destImage = new Bitmap(width, height);
+        public static Bitmap ResizeImage(Image image, int width, int height, bool cropSides = false)
+        {           
+            try
+            {
+                if (cropSides)
+                {
+                    // Cuts down a 21:9 image to a 16:9 image by removing the outer sides
+                    using (var croppedImage = new Bitmap(image).CropAtRectangle(new Rectangle(Convert.ToInt32((image.Width / 21) * 2.5), 0, (image.Width / 21) * 16, image.Height)))
+                    {
+                        return new Bitmap(croppedImage, width, height);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // ToDo: Log this exception. Just catching in case there are memory issues with the Bitmap. Shouldn't happen though.
+                _log.Error(ex, $"Error while resizing the image. width: {width} height: {height} cropSides: {cropSides}");
+            }            
 
-             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-             using (var graphics = Graphics.FromImage(destImage))
-             {
-                 graphics.CompositingMode = CompositingMode.SourceCopy;
-                 graphics.CompositingQuality = CompositingQuality.HighSpeed;
-                 graphics.InterpolationMode = InterpolationMode.Bicubic;
-                 graphics.SmoothingMode = SmoothingMode.None;
-                 graphics.PixelOffsetMode = PixelOffsetMode.None;
-
-                 using (var wrapMode = new ImageAttributes())
-                 {
-                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                 }
-             }
-
-             return destImage;*/
             return new Bitmap(image, width, height);
         }
 

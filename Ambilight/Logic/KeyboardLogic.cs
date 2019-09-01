@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Corale.Colore.Core;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Corale;
-using Corale.Colore.Core;
-using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 using ColoreColor = Corale.Colore.Core.Color;
+using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
 
 
 namespace Ambilight.Logic
@@ -23,7 +17,7 @@ namespace Ambilight.Logic
 
         public KeyboardLogic(GUI.TraySettings settings)
         {
-            this.settings = settings;            
+            this.settings = settings;
         }
 
         /// <summary>
@@ -32,11 +26,11 @@ namespace Ambilight.Logic
         /// <param name="newImage">ScreenShot</param>
         internal void Process(Bitmap newImage)
         {
-            Bitmap map = ImageManipulation.ResizeImage(newImage, settings.KeyboardWidth, settings.KeyboardHeight);
+            Bitmap map = ImageManipulation.ResizeImage(newImage, settings.KeyboardWidth, settings.KeyboardHeight, settings.UltrawideModeBool);
             map = ImageManipulation.ApplySaturation(map, settings.Saturation);
-            _keyboardGrid = KeyboardCustom.Create();
+            _keyboardGrid = KeyboardCustom.Create();            
             _keyboardGrid = GenerateKeyboardGrid(map, _keyboardGrid);
-            Chroma.Instance.Keyboard.SetCustom(_keyboardGrid);            
+            Chroma.Instance.Keyboard.SetCustom(_keyboardGrid);
         }
 
         /// <summary>
@@ -52,7 +46,16 @@ namespace Ambilight.Logic
             {
                 for (var c = 0; c < settings.KeyboardWidth; c++)
                 {
-                    System.Drawing.Color color = map.GetPixel(c, r);
+                    System.Drawing.Color color;
+
+                    if (settings.AmbiModeBool)
+                    {
+                        color = map.GetPixel(c, settings.KeyboardHeight - 1);
+                    }
+                    else
+                    {
+                        color = map.GetPixel(c, r);
+                    }
 
                     keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
