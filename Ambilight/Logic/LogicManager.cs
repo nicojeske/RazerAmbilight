@@ -36,10 +36,6 @@ namespace Ambilight.Logic
 
             DesktopDuplicatorReader reader = new DesktopDuplicatorReader(this, settings);
             
-            while (true)
-            {
-                Thread.Sleep(1000 / settings.Tickrate);
-            }
         }
         
         /// <summary>
