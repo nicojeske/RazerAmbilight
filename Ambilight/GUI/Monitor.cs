@@ -21,7 +21,6 @@ namespace Ambilight.GUI
                 comboBox1.Items.Add((i+1)+": Resolution:("+Screen.AllScreens[i].Bounds.Width+"*"+ Screen.AllScreens[i].Bounds.Height+")");
             }
             comboBox1.SelectedIndex = actualMonitor;
-            //Console.WriteLine(Screen.AllScreens[0].DeviceName);
             comboBox1.SelectedIndexChanged += MonitorChangedHandler;
         }
     }

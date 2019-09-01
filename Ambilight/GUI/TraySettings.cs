@@ -29,11 +29,10 @@ namespace Ambilight.GUI
         public bool AmbiModeBool { get; private set; }
         public bool UltrawideModeBool { get; private set; }
         public bool AutostartEnabledBool { get; private set; }
+        public int Monitor { get; set; }
 
         private NotifyIcon notifyIcon;
 
-        public int Monitor { get; set; }
-       
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
 
@@ -58,7 +57,7 @@ namespace Ambilight.GUI
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
                 AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
-
+                Monitor = Properties.Settings.Default.monitor;
                
 
 
@@ -122,8 +121,7 @@ namespace Ambilight.GUI
                 Properties.Settings.Default.Save();
             });
 
-            MenuItem _monitor = new MenuItem("Change Monitor");
-            Monitor = Properties.Settings.Default.monitor;
+           
 
             MenuItem _ambiModeEnabled = new MenuItem("'Real' Ambilight mode", (sender, args) =>
             {
