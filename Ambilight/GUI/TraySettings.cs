@@ -200,7 +200,7 @@ namespace Ambilight.GUI
 
         private void changeMonitorHandler(object sender, EventArgs e)
         {
-            Monitor monitorWindow = new Monitor(monitorChangedHandler);
+            Monitor monitorWindow = new Monitor(monitorChangedHandler,Properties.Settings.Default.monitor);
             monitorWindow.Show();
         }
         private void monitorChangedHandler(object sender, EventArgs e)
@@ -211,7 +211,8 @@ namespace Ambilight.GUI
             if (result == DialogResult.Yes)
             {
                 notifyIcon.Dispose();
-                Application.Restart();
+                System.Diagnostics.Process.Start(Application.ExecutablePath);
+                Environment.Exit(0);
             }
                 
         }
