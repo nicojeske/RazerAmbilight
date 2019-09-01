@@ -162,6 +162,12 @@
     <Compile Include="DesktopDuplication\DesktopDuplicatorReader.cs" />
     <Compile Include="DesktopDuplication\IDesktopDuplicatorReader.cs" />
     <Compile Include="Extensions\RawRectangleExtensions.cs" />
+    <Compile Include="GUI\Monitor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Monitor.Designer.cs">
+      <DependentUpon>Monitor.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\TraySettings.cs" />
     <Compile Include="GUI\KeyboardSizeControl.cs">
       <SubType>Form</SubType>
@@ -189,6 +195,7 @@
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\FpsLogger.cs" />
     <Compile Include="Util\ImageManipulation.cs" />
+    <Compile Include="Util\ScreenInterrogatory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -231,6 +238,9 @@
   <ItemGroup>
     <EmbeddedResource Include="GUI\KeyboardSizeControl.resx">
       <DependentUpon>KeyboardSizeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Monitor.resx">
+      <DependentUpon>Monitor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\SaturationControl.resx">
       <DependentUpon>SaturationControl.cs</DependentUpon>
