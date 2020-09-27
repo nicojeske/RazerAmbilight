@@ -82,7 +82,22 @@ namespace Ambilight.Properties {
                 this["mousematEnabled"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool linkEnabled
+        {
+            get
+            {
+                return ((bool)(this["linkEnabled"]));
+            }
+            set
+            {
+                this["linkEnabled"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]

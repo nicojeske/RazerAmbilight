@@ -22,6 +22,7 @@ namespace Ambilight.Logic
         private KeyboardLogic _keyboardLogic;
         private MousePadLogic _mousePadLogic;
         private MouseLogic _mouseLogic;
+        private LinkLogic _linkLogic;
         private readonly GUI.TraySettings settings;
 
         public LogicManager(GUI.TraySettings settings)
@@ -33,6 +34,7 @@ namespace Ambilight.Logic
             _keyboardLogic = new KeyboardLogic(settings);
             _mousePadLogic = new MousePadLogic(settings);
             _mouseLogic = new MouseLogic(settings);
+            _linkLogic = new LinkLogic(settings);
 
             DesktopDuplicatorReader reader = new DesktopDuplicatorReader(this, settings);
             
@@ -53,6 +55,8 @@ namespace Ambilight.Logic
                 _mousePadLogic.Process(newImage);
             if (settings.MouseEnabledBool)
                 _mouseLogic.Process(newImage);
+            if (settings.LinkEnabledBool)
+                _linkLogic.Process(newImage);
 
             newImage.Dispose();
         }
