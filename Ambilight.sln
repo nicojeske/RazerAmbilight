@@ -5,16 +5,28 @@ VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ambilight", "Ambilight\Ambilight.csproj", "{3705D85C-E977-4912-A3F4-54D09EB45EFC}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{057FBCC5-792A-4B06-BCD2-E7A0A0BF8495}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3705D85C-E977-4912-A3F4-54D09EB45EFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3705D85C-E977-4912-A3F4-54D09EB45EFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3705D85C-E977-4912-A3F4-54D09EB45EFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3705D85C-E977-4912-A3F4-54D09EB45EFC}.Debug|x86.Build.0 = Debug|Any CPU
 		{3705D85C-E977-4912-A3F4-54D09EB45EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3705D85C-E977-4912-A3F4-54D09EB45EFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3705D85C-E977-4912-A3F4-54D09EB45EFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{3705D85C-E977-4912-A3F4-54D09EB45EFC}.Release|x86.Build.0 = Release|Any CPU
+		{057FBCC5-792A-4B06-BCD2-E7A0A0BF8495}.Debug|Any CPU.ActiveCfg = Debug
+		{057FBCC5-792A-4B06-BCD2-E7A0A0BF8495}.Debug|x86.ActiveCfg = Debug
+		{057FBCC5-792A-4B06-BCD2-E7A0A0BF8495}.Release|Any CPU.ActiveCfg = Release
+		{057FBCC5-792A-4B06-BCD2-E7A0A0BF8495}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
