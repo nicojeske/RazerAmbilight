@@ -15,3 +15,5 @@
 /Setup1/Release/setup.exe
 /Setup1/Setup1.vdproj
 /UpgradeLog2.htm
+*.exe
+*.msi

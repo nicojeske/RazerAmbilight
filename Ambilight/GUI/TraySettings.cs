@@ -25,6 +25,7 @@ namespace Ambilight.GUI
         public int KeyboardHeight { get; private set; }
         public bool KeyboardEnabledBool { get; private set; }
         public bool MouseEnabledBool { get; private set; }
+        public bool LinkEnabledBool { get; private set; }
         public bool PadEnabledBool { get; private set; }
         public bool AmbiModeBool { get; private set; }
         public bool UltrawideModeBool { get; private set; }
@@ -121,6 +122,14 @@ namespace Ambilight.GUI
                 Properties.Settings.Default.Save();
             });
 
+            MenuItem _linkEnabled = new MenuItem("LinkChroma enabled", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.linkEnabled = (sender as MenuItem).Checked;
+                LinkEnabledBool = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
+
             MenuItem _ambiModeEnabled = new MenuItem("'Real' Ambilight mode", (sender, args) =>
             {
                 EnableMenuItemOnClick(sender, args);
@@ -152,6 +161,8 @@ namespace Ambilight.GUI
             MouseEnabledBool = Properties.Settings.Default.mouseEnabled;
             _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
             PadEnabledBool = Properties.Settings.Default.mousematEnabled;
+            _linkEnabled.Checked = Properties.Settings.Default.linkEnabled;
+            LinkEnabledBool = Properties.Settings.Default.linkEnabled;
             _ambiModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
             AmbiModeBool = Properties.Settings.Default.ambiEnabled;
             _ultrawideModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
@@ -176,6 +187,7 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add(_keyboardEnabled);
             contextMenu.MenuItems.Add(_mouseEnabled);
             contextMenu.MenuItems.Add(_mousematEnabled);
+            contextMenu.MenuItems.Add(_linkEnabled);
 
              notifyIcon = new NotifyIcon(components)
             {
@@ -187,6 +199,7 @@ namespace Ambilight.GUI
             logger.Info("Keyboard Enabled: " + _keyboardEnabled.Checked);
             logger.Info("Mouse Enabled: " + _mouseEnabled.Checked);
             logger.Info("Mousemat Enabled: " + _mousematEnabled.Checked);
+            logger.Info("ChromaLink Enabled: " + _linkEnabled.Checked);
             logger.Info("Ambilight mode: " + _ambiModeEnabled.Checked);
             logger.Info("Ultrawide mode: " + _ultrawideModeEnabled.Checked);
 
