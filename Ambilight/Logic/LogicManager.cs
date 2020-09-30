@@ -3,6 +3,7 @@ using System.Drawing;
 using Ambilight.DesktopDuplication;
 using Ambilight.GUI;
 using Colore;
+using Colore.Data;
 using NLog;
 using Color = Colore.Data.Color;
 
@@ -35,6 +36,22 @@ namespace Ambilight.Logic
         {
             //Initializing Chroma SDK
             IChroma chromaInstance = await ColoreProvider.CreateNativeAsync();
+            AppInfo appInfo = new AppInfo(
+                "Ambilight for Razer devices",
+                "Shows an ambilight effect on your Razer Chroma devices",
+                "Nico Jeske",
+                "ambilight@nicojeske.de",
+                new[]
+                {
+                    ApiDeviceType.Headset,
+                    ApiDeviceType.Keyboard,
+                    ApiDeviceType.Keypad,
+                    ApiDeviceType.Mouse,
+                    ApiDeviceType.Mousepad,
+                    ApiDeviceType.ChromaLink
+                },
+                Category.Application);
+            await chromaInstance.InitializeAsync(appInfo);
 
             _keyboardLogic = new KeyboardLogic(settings, chromaInstance);
             _mousePadLogic = new MousePadLogic(settings, chromaInstance);
@@ -53,7 +70,7 @@ namespace Ambilight.Logic
         public void ProcessNewImage(Bitmap img)
         {
             Bitmap newImage = new Bitmap(img);
-            
+
             if (settings.KeyboardEnabled)
                 _keyboardLogic.Process(newImage);
             if (settings.PadEnabled)
