@@ -17,7 +17,7 @@ namespace Ambilight
         private static void Main(string[] args)
         {
 
-            logger.Info("\n\n\n --- Razer Ambilight Version 2.4.0 ----");
+            logger.Info("\n\n\n --- Razer Ambilight Version 3.0.0 ----");
             AutoUpdater.Start("https://nicojeske.de/ambi/ambi.xml");
 
             GUI.TraySettings tray = new GUI.TraySettings();
