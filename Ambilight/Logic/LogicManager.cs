@@ -20,6 +20,7 @@ namespace Ambilight.Logic
         private MouseLogic _mouseLogic;
         private LinkLogic _linkLogic;
         private HeadsetLogic _headsetLogic;
+        private KeypadLogic _keypadLogic;
 
         private readonly TraySettings settings;
 
@@ -40,6 +41,7 @@ namespace Ambilight.Logic
             _mouseLogic = new MouseLogic(settings, chromaInstance);
             _linkLogic = new LinkLogic(settings, chromaInstance);
             _headsetLogic = new HeadsetLogic(settings, chromaInstance);
+            _keypadLogic = new KeypadLogic(settings, chromaInstance);
 
             DesktopDuplicatorReader reader = new DesktopDuplicatorReader(this, settings);
         }
@@ -62,6 +64,8 @@ namespace Ambilight.Logic
                 _linkLogic.Process(newImage);
             if (settings.HeadsetEnabled)
                 _headsetLogic.Process(newImage);
+            if (settings.KeypadEnabeled)
+                _keypadLogic.Process(newImage);
 
             newImage.Dispose();
         }
