@@ -1,8 +1,8 @@
-﻿using Corale.Colore.Core;
-using System.Drawing;
-using ColoreColor = Corale.Colore.Core.Color;
-using KeyboardCustom = Corale.Colore.Razer.Keyboard.Effects.Custom;
-
+﻿using System.Drawing;
+using Ambilight.GUI;
+using Colore;
+using Colore.Effects.Keyboard;
+using ColoreColor = Colore.Data.Color;
 
 namespace Ambilight.Logic
 {
@@ -10,58 +10,56 @@ namespace Ambilight.Logic
     /// <summary>
     /// Handles the Ambilight Effect for the mouse
     /// </summary>
-    class KeyboardLogic
+    class KeyboardLogic : IDeviceLogic
     {
-        private GUI.TraySettings settings;
-        private KeyboardCustom _keyboardGrid;
+        private readonly GUI.TraySettings _settings;
+        private CustomKeyboardEffect _keyboardGrid = Colore.Effects.Keyboard.CustomKeyboardEffect.Create();
+        private IChroma _chroma;
 
-        public KeyboardLogic(GUI.TraySettings settings)
+        public KeyboardLogic(TraySettings settings, IChroma chromaInstance)
         {
-            this.settings = settings;
+            this._settings = settings;
+            this._chroma = chromaInstance;
         }
 
         /// <summary>
         /// Processes a ScreenShot and creates an Ambilight Effect for the keyboard
         /// </summary>
         /// <param name="newImage">ScreenShot</param>
-        internal void Process(Bitmap newImage)
+        public void Process(Bitmap newImage)
         {
-            Bitmap map = ImageManipulation.ResizeImage(newImage, settings.KeyboardWidth, settings.KeyboardHeight, settings.UltrawideModeBool);
-            map = ImageManipulation.ApplySaturation(map, settings.Saturation);
-            _keyboardGrid = KeyboardCustom.Create();            
-            _keyboardGrid = GenerateKeyboardGrid(map, _keyboardGrid);
-            Chroma.Instance.Keyboard.SetCustom(_keyboardGrid);
+            Bitmap map = ImageManipulation.ResizeImage(newImage, _settings.KeyboardWidth, _settings.KeyboardHeight, _settings.UltrawideModeBool);
+            map = ImageManipulation.ApplySaturation(map, _settings.Saturation);
+            ApplyPictureToGrid(map);
+            _chroma.Keyboard.SetCustomAsync(_keyboardGrid);
         }
 
         /// <summary>
         /// From a given resized screenshot, an ambilight effect will be created for the keyboard
         /// </summary>
         /// <param name="map">resized screenshot</param>
-        /// <param name="keyboardGrid">effect grid</param>
         /// <returns>EffectGrid</returns>
-        private KeyboardCustom GenerateKeyboardGrid(Bitmap map, KeyboardCustom keyboardGrid)
+        private void ApplyPictureToGrid(Bitmap map)
         {
             //Iterating over each key and set it to the corrosponding color of the resized Screenshot
-            for (var r = 0; r < settings.KeyboardHeight; r++)
+            for (var r = 0; r < _settings.KeyboardHeight; r++)
             {
-                for (var c = 0; c < settings.KeyboardWidth; c++)
+                for (var c = 0; c < _settings.KeyboardWidth; c++)
                 {
                     System.Drawing.Color color;
 
-                    if (settings.AmbiModeBool)
+                    if (_settings.AmbiModeBool)
                     {
-                        color = map.GetPixel(c, settings.KeyboardHeight - 1);
+                        color = map.GetPixel(c, _settings.KeyboardHeight - 1);
                     }
                     else
                     {
                         color = map.GetPixel(c, r);
                     }
 
-                    keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                    _keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
             }
-
-            return keyboardGrid;
         }
     }
 }

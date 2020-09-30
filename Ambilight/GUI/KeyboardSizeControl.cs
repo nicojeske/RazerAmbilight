@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using KeyboardConstants = Corale.Colore.Razer.Keyboard.Constants;
+using Colore.Effects.Keyboard;
 
 namespace Ambilight
 {
@@ -64,8 +64,8 @@ namespace Ambilight
 
         private void defaultButtonClicked(object sender, EventArgs e)
         {
-            this.widthTxt.Text = Corale.Colore.Razer.Keyboard.Constants.MaxColumns.ToString();
-            this.heightTxt.Text = Corale.Colore.Razer.Keyboard.Constants.MaxRows.ToString();
+            this.widthTxt.Text = KeyboardConstants.MaxColumns.ToString();
+            this.heightTxt.Text = KeyboardConstants.MaxRows.ToString();
             saveBtn_Click(this, null);
         }
 

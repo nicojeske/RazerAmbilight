@@ -88,8 +88,9 @@
     <Reference Include="AutoUpdater.NET, Version=1.6.3.0, Culture=neutral, PublicKeyToken=501435c91b35f4bc, processorArchitecture=MSIL">
       <HintPath>..\packages\Autoupdater.NET.Official.1.6.3\lib\net45\AutoUpdater.NET.dll</HintPath>
     </Reference>
-    <Reference Include="Corale.Colore, Version=5.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colore.5.2.0\lib\net35\Corale.Colore.dll</HintPath>
+    <Reference Include="Colore, Version=6.0.0.14, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Colore.6.0.0-rc0014\lib\net452\Colore.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
@@ -180,6 +181,8 @@
     <Compile Include="GUI\KeyboardSizeControl.Designer.cs">
       <DependentUpon>KeyboardSizeControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logic\HeadsetLogic.cs" />
+    <Compile Include="Logic\IDeviceLogic.cs" />
     <Compile Include="Logic\KeyboardLogic.cs" />
     <Compile Include="Logic\LinkLogic.cs" />
     <Compile Include="Logic\LogicManager.cs" />

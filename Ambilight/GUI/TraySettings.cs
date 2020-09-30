@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Colore.Effects.Keyboard;
 
 namespace Ambilight.GUI
 {
@@ -39,8 +40,8 @@ namespace Ambilight.GUI
 
         public TraySettings()
         {
-            KeyboardWidth = Corale.Colore.Razer.Keyboard.Constants.MaxColumns;
-            KeyboardHeight = Corale.Colore.Razer.Keyboard.Constants.MaxRows;
+            KeyboardWidth = KeyboardConstants.MaxColumns;
+            KeyboardHeight = KeyboardConstants.MaxRows;
             loadConfig();
             Thread trayThread = new Thread(InitializeTray);
             trayThread.Start();
@@ -62,22 +63,22 @@ namespace Ambilight.GUI
                
 
 
-                if (_keyboardWidthProperty >= 0 && _keyboardWidthProperty < Corale.Colore.Razer.Keyboard.Constants.MaxColumns)
+                if (_keyboardWidthProperty >= 0 && _keyboardWidthProperty < KeyboardConstants.MaxColumns)
                 {                   
                     KeyboardWidth = _keyboardWidthProperty;
                 } else
                 {
                     logger.Warn("Invalid keyboardWidth changing back to default value");
-                    KeyboardWidth = Corale.Colore.Razer.Keyboard.Constants.MaxColumns;
+                    KeyboardWidth = KeyboardConstants.MaxColumns;
                 }
 
-                if (_keyboardHeightProperty >= 0 && _keyboardHeightProperty < Corale.Colore.Razer.Keyboard.Constants.MaxRows)
+                if (_keyboardHeightProperty >= 0 && _keyboardHeightProperty < KeyboardConstants.MaxRows)
                 {
                     KeyboardHeight = _keyboardHeightProperty;
                 } else
                 {
                     logger.Warn("Invalid keyboardHeight changing back to default value");
-                    KeyboardHeight = Corale.Colore.Razer.Keyboard.Constants.MaxRows;
+                    KeyboardHeight = KeyboardConstants.MaxRows;
                 }
             }
             catch (SettingsPropertyNotFoundException)
@@ -173,7 +174,6 @@ namespace Ambilight.GUI
             var components = new System.ComponentModel.Container();
             var contextMenu = new ContextMenu();
 
-            contextMenu.MenuItems.Add("Exit", (sender, args) => { notifyIcon.Dispose();Environment.Exit(0); });
             contextMenu.MenuItems.Add("Change max fps", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
             contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);
@@ -188,6 +188,10 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add(_mouseEnabled);
             contextMenu.MenuItems.Add(_mousematEnabled);
             contextMenu.MenuItems.Add(_linkEnabled);
+            
+            contextMenu.MenuItems.Add("-");
+            contextMenu.MenuItems.Add("Exit", (sender, args) => { notifyIcon.Dispose();Environment.Exit(0); });
+
 
              notifyIcon = new NotifyIcon(components)
             {
@@ -285,7 +289,7 @@ namespace Ambilight.GUI
             int KeyboardWidthSetting = k.GetTxtWidth();
             int KeyboardHeightSetting = k.GetTxtHeight();
 
-            if (KeyboardWidthSetting < 0 || KeyboardWidthSetting > Corale.Colore.Razer.Keyboard.Constants.MaxColumns || KeyboardHeightSetting < 0 || KeyboardHeightSetting > Corale.Colore.Razer.Keyboard.Constants.MaxRows)
+            if (KeyboardWidthSetting < 0 || KeyboardWidthSetting > KeyboardConstants.MaxColumns || KeyboardHeightSetting < 0 || KeyboardHeightSetting > KeyboardConstants.MaxRows)
             {
                 k.errorReport("Input invalid");
                 return;
