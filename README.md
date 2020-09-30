@@ -12,7 +12,7 @@
 * Settings can be found by right-clicking the program icon in your notification area on your task bar.
 
 ## Download:
-You can always download the latest release from here: https://github.com/Sancas/RazerAmbilight/releases
+You can always download the latest release from here: https://github.com/nicojeske/RazerAmbilight/releases
 Make sure that you have Razer Synapse running. Otherwise the app won't work.
 
 ## Note:

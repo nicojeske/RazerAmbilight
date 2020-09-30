@@ -1,13 +1,8 @@
-﻿using Corale.Colore.Core;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Corale.Colore.Razer.Mouse.Effects;
-using ColoreColor = Corale.Colore.Core.Color;
+﻿using System.Drawing;
 using Ambilight.GUI;
+using Colore;
+using Colore.Effects.Mouse;
+using ColoreColor = Colore.Data.Color;
 
 namespace Ambilight.Logic
 {
@@ -15,27 +10,29 @@ namespace Ambilight.Logic
     /// <summary>
     /// Handles the Ambilight Effect for the mouse
     /// </summary>
-    class MouseLogic
+    class MouseLogic : IDeviceLogic
     {
-        private TraySettings settings;
+        private TraySettings _settings;
+        private IChroma _chroma;
+        private CustomMouseEffect _mouseGrid = CustomMouseEffect.Create();
 
-        public MouseLogic(TraySettings settings)
+        public MouseLogic(TraySettings settings, IChroma chromaInstance)
         {
-            this.settings = settings;
+            this._settings = settings;
+            this._chroma = chromaInstance;
         }
 
         /// <summary>
         /// Processes a ScreenShot and creates an Ambilight Effect for the mouse
         /// </summary>
         /// <param name="newImage">ScreenShot</param>
-        internal void Process(Bitmap newImage)
+        public void Process(Bitmap newImage)
         {
-            var mouseGrid = Corale.Colore.Razer.Mouse.Effects.CustomGrid.Create();
-            Bitmap mapMouse = ImageManipulation.ResizeImage(newImage, Corale.Colore.Razer.Mouse.Constants.MaxColumns,
-                    Corale.Colore.Razer.Mouse.Constants.MaxRows);
-            mapMouse = ImageManipulation.ApplySaturation(mapMouse, settings.Saturation);            
-            mouseGrid = GenerateMouseGrid(mapMouse, mouseGrid);
-            Chroma.Instance.Mouse.SetGrid(mouseGrid);
+            Bitmap mapMouse = ImageManipulation.ResizeImage(newImage, MouseConstants.MaxColumns,
+                    MouseConstants.MaxRows);
+            mapMouse = ImageManipulation.ApplySaturation(mapMouse, _settings.Saturation);            
+            ApplyPictureToGrid(mapMouse);
+            _chroma.Mouse.SetGridAsync(_mouseGrid);
             mapMouse.Dispose();
         }
 
@@ -45,26 +42,24 @@ namespace Ambilight.Logic
         /// <param name="mapMousePad">resized screenshot</param>
         /// <param name="mousePadGrid">effect grid</param>
         /// <returns>EffectGrid</returns>
-        private CustomGrid GenerateMouseGrid(Bitmap mapMouse, CustomGrid mouseGrid)
+        private void ApplyPictureToGrid(Bitmap mapMouse)
         {
 
-            for (var r = 0; r < Corale.Colore.Razer.Mouse.Constants.MaxRows; r++)
+            for (var r = 0; r < MouseConstants.MaxRows; r++)
             {
-                for (var c = 0; c < Corale.Colore.Razer.Mouse.Constants.MaxColumns; c++)
+                for (var c = 0; c < MouseConstants.MaxColumns; c++)
                 {
-                    System.Drawing.Color color;
+                    Color color;
 
-                    if (settings.AmbiModeBool)
+                    if (_settings.AmbiModeEnabled)
                         color = mapMouse.GetPixel(6, 8);
                     else
                         color = mapMouse.GetPixel(c, r);
 
 
-                    mouseGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                    _mouseGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
                 }
             }
-
-            return mouseGrid;
         }
     }
 

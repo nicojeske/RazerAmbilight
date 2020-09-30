@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Colore.Effects.Keyboard;
 
 namespace Ambilight.GUI
 {
@@ -23,14 +24,15 @@ namespace Ambilight.GUI
         public float Saturation { get; private set; }
         public int KeyboardWidth { get; private set; }
         public int KeyboardHeight { get; private set; }
-        public bool KeyboardEnabledBool { get; private set; }
-        public bool MouseEnabledBool { get; private set; }
-        public bool LinkEnabledBool { get; private set; }
-        public bool PadEnabledBool { get; private set; }
-        public bool AmbiModeBool { get; private set; }
-        public bool UltrawideModeBool { get; private set; }
-        public bool AutostartEnabledBool { get; private set; }
-        public int Monitor { get; set; }
+        public bool KeyboardEnabled { get; private set; }
+        public bool MouseEnabled { get; private set; }
+        public bool LinkEnabled { get; private set; }
+        public bool PadEnabled { get; private set; }
+        public bool HeadsetEnabled { get; private set; }
+        public bool AmbiModeEnabled { get; private set; }
+        public bool UltrawideModeEnabled { get; private set; }
+        public bool AutostartEnabled { get; private set; }
+        public int SelectedMonitor { get; set; }
 
         private NotifyIcon notifyIcon;
 
@@ -39,8 +41,8 @@ namespace Ambilight.GUI
 
         public TraySettings()
         {
-            KeyboardWidth = Corale.Colore.Razer.Keyboard.Constants.MaxColumns;
-            KeyboardHeight = Corale.Colore.Razer.Keyboard.Constants.MaxRows;
+            KeyboardWidth = KeyboardConstants.MaxColumns;
+            KeyboardHeight = KeyboardConstants.MaxRows;
             loadConfig();
             Thread trayThread = new Thread(InitializeTray);
             trayThread.Start();
@@ -57,27 +59,27 @@ namespace Ambilight.GUI
                 Saturation = Properties.Settings.Default.saturation;
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
-                AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
-                Monitor = Properties.Settings.Default.monitor;
+                AutostartEnabled = Properties.Settings.Default.autostartEnabled;
+                SelectedMonitor = Properties.Settings.Default.monitor;
                
 
 
-                if (_keyboardWidthProperty >= 0 && _keyboardWidthProperty < Corale.Colore.Razer.Keyboard.Constants.MaxColumns)
+                if (_keyboardWidthProperty >= 0 && _keyboardWidthProperty < KeyboardConstants.MaxColumns)
                 {                   
                     KeyboardWidth = _keyboardWidthProperty;
                 } else
                 {
                     logger.Warn("Invalid keyboardWidth changing back to default value");
-                    KeyboardWidth = Corale.Colore.Razer.Keyboard.Constants.MaxColumns;
+                    KeyboardWidth = KeyboardConstants.MaxColumns;
                 }
 
-                if (_keyboardHeightProperty >= 0 && _keyboardHeightProperty < Corale.Colore.Razer.Keyboard.Constants.MaxRows)
+                if (_keyboardHeightProperty >= 0 && _keyboardHeightProperty < KeyboardConstants.MaxRows)
                 {
                     KeyboardHeight = _keyboardHeightProperty;
                 } else
                 {
                     logger.Warn("Invalid keyboardHeight changing back to default value");
-                    KeyboardHeight = Corale.Colore.Razer.Keyboard.Constants.MaxRows;
+                    KeyboardHeight = KeyboardConstants.MaxRows;
                 }
             }
             catch (SettingsPropertyNotFoundException)
@@ -86,7 +88,7 @@ namespace Ambilight.GUI
                 Saturation = 1f;
             }
 
-            logger.Info("Autostart: " + AutostartEnabledBool);
+            logger.Info("Autostart: " + AutostartEnabled);
             logger.Info("Keyboard width: " + KeyboardWidth);
             logger.Info("Keyboard height: " + KeyboardHeight);
             logger.Info("Max FPS: " + Tickrate);
@@ -102,7 +104,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.keyboardEnabled = (sender as MenuItem).Checked;
-                KeyboardEnabledBool = (sender as MenuItem).Checked;
+                KeyboardEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -110,7 +112,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.mouseEnabled = (sender as MenuItem).Checked;
-                MouseEnabledBool = (sender as MenuItem).Checked;
+                MouseEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -118,7 +120,15 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.mousematEnabled = (sender as MenuItem).Checked;
-                PadEnabledBool = (sender as MenuItem).Checked;
+                PadEnabled = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
+            
+            MenuItem _headsetEnabled = new MenuItem("Headset enabled", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.headsetEnabled = (sender as MenuItem).Checked;
+                HeadsetEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -126,7 +136,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.linkEnabled = (sender as MenuItem).Checked;
-                LinkEnabledBool = (sender as MenuItem).Checked;
+                LinkEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -134,7 +144,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.ambiEnabled = (sender as MenuItem).Checked;
-                AmbiModeBool = (sender as MenuItem).Checked;
+                AmbiModeEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -142,7 +152,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.ultrawideEnabled = (sender as MenuItem).Checked;
-                UltrawideModeBool = (sender as MenuItem).Checked;
+                UltrawideModeEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -151,29 +161,30 @@ namespace Ambilight.GUI
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.autostartEnabled = (sender as MenuItem).Checked;
                 changeAutoStart();
-                AutostartEnabledBool = (sender as MenuItem).Checked;
+                AutostartEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
             _keyboardEnabled.Checked = Properties.Settings.Default.keyboardEnabled;
-            KeyboardEnabledBool = Properties.Settings.Default.keyboardEnabled;
+            KeyboardEnabled = Properties.Settings.Default.keyboardEnabled;
             _mouseEnabled.Checked = Properties.Settings.Default.mouseEnabled;
-            MouseEnabledBool = Properties.Settings.Default.mouseEnabled;
+            MouseEnabled = Properties.Settings.Default.mouseEnabled;
             _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
-            PadEnabledBool = Properties.Settings.Default.mousematEnabled;
+            PadEnabled = Properties.Settings.Default.mousematEnabled;
+            _headsetEnabled.Checked = Properties.Settings.Default.headsetEnabled;
+            HeadsetEnabled = Properties.Settings.Default.headsetEnabled;
             _linkEnabled.Checked = Properties.Settings.Default.linkEnabled;
-            LinkEnabledBool = Properties.Settings.Default.linkEnabled;
+            LinkEnabled = Properties.Settings.Default.linkEnabled;
             _ambiModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
-            AmbiModeBool = Properties.Settings.Default.ambiEnabled;
+            AmbiModeEnabled = Properties.Settings.Default.ambiEnabled;
             _ultrawideModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
-            UltrawideModeBool = Properties.Settings.Default.ultrawideEnabled;
+            UltrawideModeEnabled = Properties.Settings.Default.ultrawideEnabled;
             _autostart.Checked = checkAutostart(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "/Ambilight.lnk");
-            AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
+            AutostartEnabled = Properties.Settings.Default.autostartEnabled;
 
             var components = new System.ComponentModel.Container();
             var contextMenu = new ContextMenu();
 
-            contextMenu.MenuItems.Add("Exit", (sender, args) => { notifyIcon.Dispose();Environment.Exit(0); });
             contextMenu.MenuItems.Add("Change max fps", ChangeTickrateHandler);
             contextMenu.MenuItems.Add("Change Saturation", ChangeSaturationHandler);
             contextMenu.MenuItems.Add("Set Manual keyboard size", changeKeyboardSizeHandler);
@@ -187,7 +198,12 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add(_keyboardEnabled);
             contextMenu.MenuItems.Add(_mouseEnabled);
             contextMenu.MenuItems.Add(_mousematEnabled);
+            contextMenu.MenuItems.Add(_headsetEnabled);
             contextMenu.MenuItems.Add(_linkEnabled);
+            
+            contextMenu.MenuItems.Add("-");
+            contextMenu.MenuItems.Add("Exit", (sender, args) => { notifyIcon.Dispose();Environment.Exit(0); });
+
 
              notifyIcon = new NotifyIcon(components)
             {
@@ -199,6 +215,7 @@ namespace Ambilight.GUI
             logger.Info("Keyboard Enabled: " + _keyboardEnabled.Checked);
             logger.Info("Mouse Enabled: " + _mouseEnabled.Checked);
             logger.Info("Mousemat Enabled: " + _mousematEnabled.Checked);
+            logger.Info("Headset Enabled: " + _headsetEnabled.Checked);
             logger.Info("ChromaLink Enabled: " + _linkEnabled.Checked);
             logger.Info("Ambilight mode: " + _ambiModeEnabled.Checked);
             logger.Info("Ultrawide mode: " + _ultrawideModeEnabled.Checked);
@@ -285,7 +302,7 @@ namespace Ambilight.GUI
             int KeyboardWidthSetting = k.GetTxtWidth();
             int KeyboardHeightSetting = k.GetTxtHeight();
 
-            if (KeyboardWidthSetting < 0 || KeyboardWidthSetting > Corale.Colore.Razer.Keyboard.Constants.MaxColumns || KeyboardHeightSetting < 0 || KeyboardHeightSetting > Corale.Colore.Razer.Keyboard.Constants.MaxRows)
+            if (KeyboardWidthSetting < 0 || KeyboardWidthSetting > KeyboardConstants.MaxColumns || KeyboardHeightSetting < 0 || KeyboardHeightSetting > KeyboardConstants.MaxRows)
             {
                 k.errorReport("Input invalid");
                 return;

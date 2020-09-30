@@ -1,15 +1,10 @@
-﻿using Ambilight.DesktopDuplication;
-using Corale.Colore.Core;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using Ambilight.DesktopDuplication;
+using Ambilight.GUI;
+using Colore;
+using NLog;
+using Color = Colore.Data.Color;
 
 namespace Ambilight.Logic
 {
@@ -17,46 +12,56 @@ namespace Ambilight.Logic
     /// This Class manages the Logic of the software. Handling the settings, Image Manipulation and logic functions
     /// </summary>
     class LogicManager
-    {        
+    {
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         private KeyboardLogic _keyboardLogic;
         private MousePadLogic _mousePadLogic;
         private MouseLogic _mouseLogic;
         private LinkLogic _linkLogic;
-        private readonly GUI.TraySettings settings;
+        private HeadsetLogic _headsetLogic;
 
-        public LogicManager(GUI.TraySettings settings)
+        private readonly TraySettings settings;
+
+        public LogicManager(TraySettings settings)
         {
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            
+
+            this.StartLogic(settings);
+        }
+
+        private async void StartLogic(TraySettings settings)
+        {
             //Initializing Chroma SDK
-            Chroma.Instance.Initialize();
-            _keyboardLogic = new KeyboardLogic(settings);
-            _mousePadLogic = new MousePadLogic(settings);
-            _mouseLogic = new MouseLogic(settings);
-            _linkLogic = new LinkLogic(settings);
+            IChroma chromaInstance = await ColoreProvider.CreateNativeAsync();
+
+            _keyboardLogic = new KeyboardLogic(settings, chromaInstance);
+            _mousePadLogic = new MousePadLogic(settings, chromaInstance);
+            _mouseLogic = new MouseLogic(settings, chromaInstance);
+            _linkLogic = new LinkLogic(settings, chromaInstance);
+            _headsetLogic = new HeadsetLogic(settings, chromaInstance);
 
             DesktopDuplicatorReader reader = new DesktopDuplicatorReader(this, settings);
-            
         }
-        
+
         /// <summary>
         /// Processes a captured Screenshot and create an Ambilight effect for the selected devices
         /// </summary>
         /// <param name="newImage"></param>
-        public void ProcessNewImage(Bitmap test)
+        public void ProcessNewImage(Bitmap img)
         {
-             //newImage = ImageManipulation.ApplySaturation(newImage, settings.Saturation);
-             Bitmap newImage = new Bitmap(test);
-
-            if (settings.KeyboardEnabledBool)
+            Bitmap newImage = new Bitmap(img);
+            
+            if (settings.KeyboardEnabled)
                 _keyboardLogic.Process(newImage);
-            if (settings.PadEnabledBool)
+            if (settings.PadEnabled)
                 _mousePadLogic.Process(newImage);
-            if (settings.MouseEnabledBool)
+            if (settings.MouseEnabled)
                 _mouseLogic.Process(newImage);
-            if (settings.LinkEnabledBool)
+            if (settings.LinkEnabled)
                 _linkLogic.Process(newImage);
+            if (settings.HeadsetEnabled)
+                _headsetLogic.Process(newImage);
 
             newImage.Dispose();
         }
