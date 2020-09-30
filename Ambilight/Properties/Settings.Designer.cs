@@ -101,6 +101,21 @@ namespace Ambilight.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool keypadEnabled
+        {
+            get
+            {
+                return ((bool)(this["keypadEnabled"]));
+            }
+            set
+            {
+                this["keypadEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool linkEnabled
         {
             get

@@ -29,6 +29,7 @@ namespace Ambilight.GUI
         public bool LinkEnabled { get; private set; }
         public bool PadEnabled { get; private set; }
         public bool HeadsetEnabled { get; private set; }
+        public bool KeypadEnabeled { get; private set; }
         public bool AmbiModeEnabled { get; private set; }
         public bool UltrawideModeEnabled { get; private set; }
         public bool AutostartEnabled { get; private set; }
@@ -131,6 +132,14 @@ namespace Ambilight.GUI
                 HeadsetEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
+            
+            MenuItem _keypadEnabled = new MenuItem("Keypad enabled", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.keypadEnabled = (sender as MenuItem).Checked;
+                KeypadEnabeled = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
 
             MenuItem _linkEnabled = new MenuItem("LinkChroma enabled", (sender, args) =>
             {
@@ -173,6 +182,8 @@ namespace Ambilight.GUI
             PadEnabled = Properties.Settings.Default.mousematEnabled;
             _headsetEnabled.Checked = Properties.Settings.Default.headsetEnabled;
             HeadsetEnabled = Properties.Settings.Default.headsetEnabled;
+            _keypadEnabled.Checked = Properties.Settings.Default.keypadEnabled;
+            KeypadEnabeled = Properties.Settings.Default.keypadEnabled;
             _linkEnabled.Checked = Properties.Settings.Default.linkEnabled;
             LinkEnabled = Properties.Settings.Default.linkEnabled;
             _ambiModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
@@ -199,6 +210,7 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add(_mouseEnabled);
             contextMenu.MenuItems.Add(_mousematEnabled);
             contextMenu.MenuItems.Add(_headsetEnabled);
+            contextMenu.MenuItems.Add(_keypadEnabled);
             contextMenu.MenuItems.Add(_linkEnabled);
             
             contextMenu.MenuItems.Add("-");
@@ -216,6 +228,7 @@ namespace Ambilight.GUI
             logger.Info("Mouse Enabled: " + _mouseEnabled.Checked);
             logger.Info("Mousemat Enabled: " + _mousematEnabled.Checked);
             logger.Info("Headset Enabled: " + _headsetEnabled.Checked);
+            logger.Info("Keypad Enabled: " + _keypadEnabled.Checked);
             logger.Info("ChromaLink Enabled: " + _linkEnabled.Checked);
             logger.Info("Ambilight mode: " + _ambiModeEnabled.Checked);
             logger.Info("Ultrawide mode: " + _ultrawideModeEnabled.Checked);
