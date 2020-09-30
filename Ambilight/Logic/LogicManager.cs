@@ -19,7 +19,6 @@ namespace Ambilight.Logic
         private MousePadLogic _mousePadLogic;
         private MouseLogic _mouseLogic;
         private LinkLogic _linkLogic;
-        private HeadsetLogic _headsetLogic;
 
         private readonly TraySettings settings;
 
@@ -39,7 +38,6 @@ namespace Ambilight.Logic
             _mousePadLogic = new MousePadLogic(settings, chromaInstance);
             _mouseLogic = new MouseLogic(settings, chromaInstance);
             _linkLogic = new LinkLogic(settings, chromaInstance);
-            _headsetLogic = new HeadsetLogic(settings, chromaInstance);
 
             DesktopDuplicatorReader reader = new DesktopDuplicatorReader(this, settings);
         }
@@ -48,20 +46,19 @@ namespace Ambilight.Logic
         /// Processes a captured Screenshot and create an Ambilight effect for the selected devices
         /// </summary>
         /// <param name="newImage"></param>
-        public void ProcessNewImage(Bitmap img)
+        public void ProcessNewImage(Bitmap test)
         {
-            Bitmap newImage = new Bitmap(img);
-            
-            if (settings.KeyboardEnabled)
+            //newImage = ImageManipulation.ApplySaturation(newImage, settings.Saturation);
+            Bitmap newImage = new Bitmap(test);
+
+            if (settings.KeyboardEnabledBool)
                 _keyboardLogic.Process(newImage);
-            if (settings.PadEnabled)
+            if (settings.PadEnabledBool)
                 _mousePadLogic.Process(newImage);
-            if (settings.MouseEnabled)
+            if (settings.MouseEnabledBool)
                 _mouseLogic.Process(newImage);
-            if (settings.LinkEnabled)
+            if (settings.LinkEnabledBool)
                 _linkLogic.Process(newImage);
-            if (settings.HeadsetEnabled)
-                _headsetLogic.Process(newImage);
 
             newImage.Dispose();
         }
