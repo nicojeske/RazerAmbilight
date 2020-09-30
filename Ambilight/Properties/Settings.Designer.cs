@@ -86,6 +86,21 @@ namespace Ambilight.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool headsetEnabled
+        {
+            get
+            {
+                return ((bool)(this["headsetEnabled"]));
+            }
+            set
+            {
+                this["headsetEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool linkEnabled
         {
             get

@@ -24,14 +24,15 @@ namespace Ambilight.GUI
         public float Saturation { get; private set; }
         public int KeyboardWidth { get; private set; }
         public int KeyboardHeight { get; private set; }
-        public bool KeyboardEnabledBool { get; private set; }
-        public bool MouseEnabledBool { get; private set; }
-        public bool LinkEnabledBool { get; private set; }
-        public bool PadEnabledBool { get; private set; }
-        public bool AmbiModeBool { get; private set; }
-        public bool UltrawideModeBool { get; private set; }
-        public bool AutostartEnabledBool { get; private set; }
-        public int Monitor { get; set; }
+        public bool KeyboardEnabled { get; private set; }
+        public bool MouseEnabled { get; private set; }
+        public bool LinkEnabled { get; private set; }
+        public bool PadEnabled { get; private set; }
+        public bool HeadsetEnabled { get; private set; }
+        public bool AmbiModeEnabled { get; private set; }
+        public bool UltrawideModeEnabled { get; private set; }
+        public bool AutostartEnabled { get; private set; }
+        public int SelectedMonitor { get; set; }
 
         private NotifyIcon notifyIcon;
 
@@ -58,8 +59,8 @@ namespace Ambilight.GUI
                 Saturation = Properties.Settings.Default.saturation;
                 int _keyboardHeightProperty = Properties.Settings.Default.keyboardHeight;
                 int _keyboardWidthProperty = Properties.Settings.Default.keyboardWidth;
-                AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
-                Monitor = Properties.Settings.Default.monitor;
+                AutostartEnabled = Properties.Settings.Default.autostartEnabled;
+                SelectedMonitor = Properties.Settings.Default.monitor;
                
 
 
@@ -87,7 +88,7 @@ namespace Ambilight.GUI
                 Saturation = 1f;
             }
 
-            logger.Info("Autostart: " + AutostartEnabledBool);
+            logger.Info("Autostart: " + AutostartEnabled);
             logger.Info("Keyboard width: " + KeyboardWidth);
             logger.Info("Keyboard height: " + KeyboardHeight);
             logger.Info("Max FPS: " + Tickrate);
@@ -103,7 +104,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.keyboardEnabled = (sender as MenuItem).Checked;
-                KeyboardEnabledBool = (sender as MenuItem).Checked;
+                KeyboardEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -111,7 +112,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.mouseEnabled = (sender as MenuItem).Checked;
-                MouseEnabledBool = (sender as MenuItem).Checked;
+                MouseEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -119,7 +120,15 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.mousematEnabled = (sender as MenuItem).Checked;
-                PadEnabledBool = (sender as MenuItem).Checked;
+                PadEnabled = (sender as MenuItem).Checked;
+                Properties.Settings.Default.Save();
+            });
+            
+            MenuItem _headsetEnabled = new MenuItem("Headset enabled", (sender, args) =>
+            {
+                EnableMenuItemOnClick(sender, args);
+                Properties.Settings.Default.headsetEnabled = (sender as MenuItem).Checked;
+                HeadsetEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -127,7 +136,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.linkEnabled = (sender as MenuItem).Checked;
-                LinkEnabledBool = (sender as MenuItem).Checked;
+                LinkEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -135,7 +144,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.ambiEnabled = (sender as MenuItem).Checked;
-                AmbiModeBool = (sender as MenuItem).Checked;
+                AmbiModeEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -143,7 +152,7 @@ namespace Ambilight.GUI
             {
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.ultrawideEnabled = (sender as MenuItem).Checked;
-                UltrawideModeBool = (sender as MenuItem).Checked;
+                UltrawideModeEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
@@ -152,24 +161,26 @@ namespace Ambilight.GUI
                 EnableMenuItemOnClick(sender, args);
                 Properties.Settings.Default.autostartEnabled = (sender as MenuItem).Checked;
                 changeAutoStart();
-                AutostartEnabledBool = (sender as MenuItem).Checked;
+                AutostartEnabled = (sender as MenuItem).Checked;
                 Properties.Settings.Default.Save();
             });
 
             _keyboardEnabled.Checked = Properties.Settings.Default.keyboardEnabled;
-            KeyboardEnabledBool = Properties.Settings.Default.keyboardEnabled;
+            KeyboardEnabled = Properties.Settings.Default.keyboardEnabled;
             _mouseEnabled.Checked = Properties.Settings.Default.mouseEnabled;
-            MouseEnabledBool = Properties.Settings.Default.mouseEnabled;
+            MouseEnabled = Properties.Settings.Default.mouseEnabled;
             _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
-            PadEnabledBool = Properties.Settings.Default.mousematEnabled;
+            PadEnabled = Properties.Settings.Default.mousematEnabled;
+            _headsetEnabled.Checked = Properties.Settings.Default.headsetEnabled;
+            HeadsetEnabled = Properties.Settings.Default.headsetEnabled;
             _linkEnabled.Checked = Properties.Settings.Default.linkEnabled;
-            LinkEnabledBool = Properties.Settings.Default.linkEnabled;
+            LinkEnabled = Properties.Settings.Default.linkEnabled;
             _ambiModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
-            AmbiModeBool = Properties.Settings.Default.ambiEnabled;
+            AmbiModeEnabled = Properties.Settings.Default.ambiEnabled;
             _ultrawideModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
-            UltrawideModeBool = Properties.Settings.Default.ultrawideEnabled;
+            UltrawideModeEnabled = Properties.Settings.Default.ultrawideEnabled;
             _autostart.Checked = checkAutostart(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "/Ambilight.lnk");
-            AutostartEnabledBool = Properties.Settings.Default.autostartEnabled;
+            AutostartEnabled = Properties.Settings.Default.autostartEnabled;
 
             var components = new System.ComponentModel.Container();
             var contextMenu = new ContextMenu();
@@ -187,6 +198,7 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add(_keyboardEnabled);
             contextMenu.MenuItems.Add(_mouseEnabled);
             contextMenu.MenuItems.Add(_mousematEnabled);
+            contextMenu.MenuItems.Add(_headsetEnabled);
             contextMenu.MenuItems.Add(_linkEnabled);
             
             contextMenu.MenuItems.Add("-");
@@ -203,6 +215,7 @@ namespace Ambilight.GUI
             logger.Info("Keyboard Enabled: " + _keyboardEnabled.Checked);
             logger.Info("Mouse Enabled: " + _mouseEnabled.Checked);
             logger.Info("Mousemat Enabled: " + _mousematEnabled.Checked);
+            logger.Info("Headset Enabled: " + _headsetEnabled.Checked);
             logger.Info("ChromaLink Enabled: " + _linkEnabled.Checked);
             logger.Info("Ambilight mode: " + _ambiModeEnabled.Checked);
             logger.Info("Ultrawide mode: " + _ultrawideModeEnabled.Checked);

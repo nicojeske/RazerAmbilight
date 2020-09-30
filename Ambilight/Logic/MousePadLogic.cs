@@ -49,7 +49,7 @@ namespace Ambilight.Logic
         private void ApplyPictureToGrid(Bitmap mapMousePad)
         {
 
-            if (!_settings.AmbiModeBool)
+            if (!_settings.AmbiModeEnabled)
             {
                 for (int i = 0; i < 4; i++)
                 {

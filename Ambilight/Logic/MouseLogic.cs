@@ -51,7 +51,7 @@ namespace Ambilight.Logic
                 {
                     Color color;
 
-                    if (_settings.AmbiModeBool)
+                    if (_settings.AmbiModeEnabled)
                         color = mapMouse.GetPixel(6, 8);
                     else
                         color = mapMouse.GetPixel(c, r);
