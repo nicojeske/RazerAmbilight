@@ -28,7 +28,7 @@ namespace Ambilight.Logic
         /// <param name="newImage">ScreenShot</param>
         public void Process(Bitmap newImage)
         {
-            Bitmap map = ImageManipulation.ResizeImage(newImage, _settings.KeyboardWidth, _settings.KeyboardHeight, _settings.UltrawideModeBool);
+            Bitmap map = ImageManipulation.ResizeImage(newImage, _settings.KeyboardWidth, _settings.KeyboardHeight, _settings.UltrawideModeEnabled);
             map = ImageManipulation.ApplySaturation(map, _settings.Saturation);
             ApplyPictureToGrid(map);
             _chroma.Keyboard.SetCustomAsync(_keyboardGrid);
@@ -48,7 +48,7 @@ namespace Ambilight.Logic
                 {
                     System.Drawing.Color color;
 
-                    if (_settings.AmbiModeBool)
+                    if (_settings.AmbiModeEnabled)
                     {
                         color = map.GetPixel(c, _settings.KeyboardHeight - 1);
                     }
