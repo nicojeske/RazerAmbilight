@@ -21,7 +21,7 @@ namespace Ambilight.DesktopDuplication
     public class DesktopDuplicator : IDisposable
     {
         private readonly Device _device;
-        private OutputDescription _outputDescription;
+        private readonly OutputDescription _outputDescription;
         private readonly OutputDuplication _outputDuplication;
 
         private Texture2D _stagingTexture;
@@ -90,8 +90,8 @@ namespace Ambilight.DesktopDuplication
 
         }
 
-        private const int mipMapLevel = 2;
-        private const int scalingFactor = 1 << mipMapLevel;
+        private const int MipMapLevel = 2;
+        private const int scalingFactor = 1 << MipMapLevel;
 
         private bool RetrieveFrame()
         {
@@ -142,7 +142,7 @@ namespace Ambilight.DesktopDuplication
                     Width = desktopWidth,
                     Height = desktopHeight,
                     OptionFlags = ResourceOptionFlags.GenerateMipMaps,
-                    MipLevels = mipMapLevel + 1,
+                    MipLevels = MipMapLevel + 1,
                     ArraySize = 1,
                     SampleDescription = { Count = 1, Quality = 0 },
                     Usage = ResourceUsage.Default
@@ -164,7 +164,7 @@ namespace Ambilight.DesktopDuplication
             _device.ImmediateContext.GenerateMips(_smallerTextureView);
 
             // Copy the mipmap 1 of smallerTexture (size/2) to the staging texture
-            _device.ImmediateContext.CopySubresourceRegion(_smallerTexture, mipMapLevel, null, _stagingTexture, 0);
+            _device.ImmediateContext.CopySubresourceRegion(_smallerTexture, MipMapLevel, null, _stagingTexture, 0);
 
             desktopResource.Dispose(); //perf?
             return true;
@@ -219,15 +219,9 @@ namespace Ambilight.DesktopDuplication
             _device.ImmediateContext.UnmapSubresource(_stagingTexture, 0);
             return image;
         }
-
-
-        public bool IsDisposed { get; private set; }
-
-        public static int ScalingFactor => scalingFactor;
-
+        
         public void Dispose()
         {
-            IsDisposed = true;
             _stagingTexture?.Dispose();
             _outputDuplication?.Dispose();
             _device?.Dispose();

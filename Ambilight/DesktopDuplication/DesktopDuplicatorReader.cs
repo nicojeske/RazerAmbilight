@@ -2,29 +2,27 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Threading;
 
 namespace Ambilight.DesktopDuplication
 {
-    internal class DesktopDuplicatorReader : IDesktopDuplicatorReader
+    internal class DesktopDuplicatorReader
     {
         private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly Logic.LogicManager _logic;
-        private readonly GUI.TraySettings settings;
+        private readonly GUI.TraySettings _settings;
 
         public DesktopDuplicatorReader(Logic.LogicManager logic, GUI.TraySettings settings)
         {
-            this._logic = logic;
-            this.settings = settings;
-
-
+            _logic = logic;
+            _settings = settings;
+            
             RefreshCapturingState();
 
             _log.Info($"DesktopDuplicatorReader created.");
         }
 
-        public bool IsRunning { get; private set; } = false;
+        private bool IsRunning { get; set; }
         private CancellationTokenSource _cancellationTokenSource;
 
 
@@ -32,31 +30,34 @@ namespace Ambilight.DesktopDuplication
         {
             var isRunning = _cancellationTokenSource != null && IsRunning;
 
-            if (isRunning)
+            switch (isRunning)
             {
-                //stop it!
-                _log.Debug("stopping the capturing");
-                _cancellationTokenSource.Cancel();
-                _cancellationTokenSource = null;
-            }
-            else if (!isRunning)
-            {
-                //start it
-                _log.Debug("starting the capturing");
-                _cancellationTokenSource = new CancellationTokenSource();
-                var thread = new Thread(() => Run(_cancellationTokenSource.Token))
+                case true:
                 {
-                    IsBackground = true,
-                    Priority = ThreadPriority.Normal,
-                    Name = "DesktopDuplicatorReader"
-                };
-                thread.Start();
+                    _log.Debug("stopping the capturing");
+                    _cancellationTokenSource.Cancel();
+                    _cancellationTokenSource = null;
+                    break;
+                }
+                case false:
+                {
+                    _log.Debug("starting the capturing");
+                    _cancellationTokenSource = new CancellationTokenSource();
+                    var thread = new Thread(() => Run(_cancellationTokenSource.Token))
+                    {
+                        IsBackground = true,
+                        Priority = ThreadPriority.Normal,
+                        Name = "DesktopDuplicatorReader"
+                    };
+                    thread.Start();
+                    break;
+                }
             }
         }
        
         private DesktopDuplicator _desktopDuplicator;
 
-        public void Run(CancellationToken token)
+        private void Run(CancellationToken token)
         {
             if (IsRunning) throw new Exception(nameof(DesktopDuplicatorReader) + " is already running!");
 
@@ -65,8 +66,6 @@ namespace Ambilight.DesktopDuplication
             Bitmap image = null;
             try
             {
-                BitmapData bitmapData = new BitmapData();
-
                 while (!token.IsCancellationRequested)
                 {
                     var frameTime = Stopwatch.StartNew();
@@ -80,7 +79,7 @@ namespace Ambilight.DesktopDuplication
 
                     _logic.ProcessNewImage(newImage);
 
-                    int minFrameTimeInMs = 1; //1000/FPS
+                    const int minFrameTimeInMs = 1; //1000/FPS
                     var elapsedMs = (int)frameTime.ElapsedMilliseconds;
                     if (elapsedMs < minFrameTimeInMs)
                     {
@@ -100,14 +99,11 @@ namespace Ambilight.DesktopDuplication
             }
         }
 
-    
-      
-
         private Bitmap GetNextFrame(Bitmap reusableBitmap)
         {
             if (_desktopDuplicator == null)
             {
-                _desktopDuplicator = new DesktopDuplicator(0, settings.SelectedMonitor);
+                _desktopDuplicator = new DesktopDuplicator(0, _settings.SelectedMonitor);
             }
 
             try
@@ -126,8 +122,5 @@ namespace Ambilight.DesktopDuplication
                 return null;
             }
         }
-
-      
-
     }
 }

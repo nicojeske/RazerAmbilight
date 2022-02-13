@@ -11,7 +11,7 @@ namespace Ambilight.Util
 {
     public static class ScreenInterrogatory
     {
-        public const int ERROR_SUCCESS = 0;
+        private const int ERROR_SUCCESS = 0;
 
         #region enums
 
@@ -247,11 +247,11 @@ namespace Ambilight.Util
         #region DLL-Imports
 
         [DllImport("user32.dll")]
-        public static extern int GetDisplayConfigBufferSizes(
+        private static extern int GetDisplayConfigBufferSizes(
             QUERY_DEVICE_CONFIG_FLAGS flags, out uint numPathArrayElements, out uint numModeInfoArrayElements);
 
         [DllImport("user32.dll")]
-        public static extern int QueryDisplayConfig(
+        private static extern int QueryDisplayConfig(
             QUERY_DEVICE_CONFIG_FLAGS flags,
             ref uint numPathArrayElements, [Out] DISPLAYCONFIG_PATH_INFO[] PathInfoArray,
             ref uint numModeInfoArrayElements, [Out] DISPLAYCONFIG_MODE_INFO[] ModeInfoArray,
@@ -259,7 +259,7 @@ namespace Ambilight.Util
         );
 
         [DllImport("user32.dll")]
-        public static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName);
+        private static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName);
 
         #endregion
 

@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="tickrate" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">40</Value>
+      <Value Profile="(Default)">60</Value>
     </Setting>
     <Setting Name="saturation" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
@@ -14,20 +14,11 @@
     <Setting Name="mouseEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="mousematEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="keyboardWidth" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
     <Setting Name="keyboardHeight" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
-    </Setting>
-    <Setting Name="ambiEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="ultrawideEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="autostartEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

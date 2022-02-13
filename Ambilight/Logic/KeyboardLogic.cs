@@ -10,16 +10,16 @@ namespace Ambilight.Logic
     /// <summary>
     /// Handles the Ambilight Effect for the mouse
     /// </summary>
-    class KeyboardLogic : IDeviceLogic
+    internal class KeyboardLogic : IDeviceLogic
     {
-        private readonly GUI.TraySettings _settings;
-        private CustomKeyboardEffect _keyboardGrid = Colore.Effects.Keyboard.CustomKeyboardEffect.Create();
-        private IChroma _chroma;
+        private readonly TraySettings _settings;
+        private readonly IChroma _chroma;
+        private CustomKeyboardEffect _keyboardGrid = CustomKeyboardEffect.Create();
 
         public KeyboardLogic(TraySettings settings, IChroma chromaInstance)
         {
-            this._settings = settings;
-            this._chroma = chromaInstance;
+            _settings = settings;
+            _chroma = chromaInstance;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Ambilight.Logic
         /// <param name="newImage">ScreenShot</param>
         public void Process(Bitmap newImage)
         {
-            Bitmap map = ImageManipulation.ResizeImage(newImage, _settings.KeyboardWidth, _settings.KeyboardHeight, _settings.UltrawideModeEnabled);
+            var map = ImageManipulation.ResizeImage(newImage, _settings.KeyboardWidth, _settings.KeyboardHeight);
             map = ImageManipulation.ApplySaturation(map, _settings.Saturation);
             ApplyPictureToGrid(map);
             _chroma.Keyboard.SetCustomAsync(_keyboardGrid);
@@ -38,7 +38,6 @@ namespace Ambilight.Logic
         /// From a given resized screenshot, an ambilight effect will be created for the keyboard
         /// </summary>
         /// <param name="map">resized screenshot</param>
-        /// <returns>EffectGrid</returns>
         private void ApplyPictureToGrid(Bitmap map)
         {
             //Iterating over each key and set it to the corrosponding color of the resized Screenshot
@@ -46,18 +45,8 @@ namespace Ambilight.Logic
             {
                 for (var c = 0; c < _settings.KeyboardWidth; c++)
                 {
-                    System.Drawing.Color color;
-
-                    if (_settings.AmbiModeEnabled)
-                    {
-                        color = map.GetPixel(c, _settings.KeyboardHeight - 1);
-                    }
-                    else
-                    {
-                        color = map.GetPixel(c, r);
-                    }
-
-                    _keyboardGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                    var color = map.GetPixel(c, r);
+                    _keyboardGrid[r, c] = new ColoreColor(color.R, color.G, color.B);
                 }
             }
         }

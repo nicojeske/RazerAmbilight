@@ -11,11 +11,11 @@ namespace Ambilight.Logic
     /// <summary>
     /// Handles the Ambilight Effect for the Link connection
     /// </summary>
-    class LinkLogic : IDeviceLogic
+    internal class LinkLogic : IDeviceLogic
     {
-        private TraySettings _settings;
+        private readonly TraySettings _settings;
+        private readonly IChroma _chroma;
         private CustomChromaLinkEffect _linkGrid = CustomChromaLinkEffect.Create();
-        private IChroma _chroma;
         
         public LinkLogic(TraySettings settings, IChroma chromaInstance)
         {
@@ -29,7 +29,7 @@ namespace Ambilight.Logic
         /// <param name="newImage">ScreenShot</param>
         public void Process(Bitmap newImage)
         {
-            Bitmap map = ImageManipulation.ResizeImage(newImage, 5, 3);
+            var map = ImageManipulation.ResizeImage(newImage, 5, 3);
             map = ImageManipulation.ApplySaturation(map, _settings.Saturation);
             
             ApplyImageToGrid(map);
@@ -40,26 +40,20 @@ namespace Ambilight.Logic
 
         private void ApplyC1(Bitmap map)
         {
-            Color color = map.GetPixel(0,0);
+            var color = map.GetPixel(0,0);
             _linkGrid[0] = new ColoreColor(color.R, color.G, color.B);
         }
 
         /// <summary>
         /// From a given resized screenshot, an ambilight effect will be created for the keyboard
+        /// Specified link configuration only for two devices in group2 and group3
         /// </summary>
         /// <param name="map">resized screenshot</param>
         private void ApplyImageToGrid(Bitmap map)
         {
-            //Iterating over each key and set it to the corrosponding color of the resized Screenshot
-            // for (int i = 1; i < Colore.Effects.ChromaLink.ChromaLinkConstants.MaxLeds; i++)
-            // {
-            //     Color color = map.GetPixel(i-1,0);
-            //     _linkGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-            // }
-
-            Color upperBulbColor = map.GetPixel(2,0);
+            var upperBulbColor = map.GetPixel(2,0);
             _linkGrid[2] = new ColoreColor(upperBulbColor.R, upperBulbColor.G, upperBulbColor.B);
-            Color downStripColor = map.GetPixel(2,2);
+            var downStripColor = map.GetPixel(2,2);
             _linkGrid[3] = new ColoreColor(downStripColor.R, downStripColor.G, downStripColor.B);
         }
     }

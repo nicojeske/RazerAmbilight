@@ -12,10 +12,9 @@ namespace Ambilight.Util
     /// <summary>
     /// Class for logging the real FPS
     /// </summary>
-    sealed class FpsLogger : IDisposable
+    internal sealed class FpsLogger : IDisposable
     {
-        private Logger _log = LogManager.GetCurrentClassLogger();
-
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
         private readonly string _name;
         private readonly Subject<Unit> _frames = new Subject<Unit>();
 
@@ -49,14 +48,12 @@ namespace Ambilight.Util
                 .Buffer(TimeSpan.FromSeconds(1))
                 .Select(nums => nums.Count);
 
-            _valueUpdatingSubscription = fpsObserverable.Subscribe(f => Fps = f);
+            _valueUpdatingSubscription = fpsObserverable.Subscribe(f => { });
 
             _loggingSubscription = loggingTrigger
                 .WithLatestFrom(fpsObserverable, (_, fps) => fps)
                 .Subscribe(WriteFpsLog);
         }
-
-        public int Fps { get; private set; }
 
         /// <summary>
         /// Writes the current fps to the log

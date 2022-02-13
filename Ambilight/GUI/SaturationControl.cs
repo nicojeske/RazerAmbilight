@@ -5,20 +5,18 @@ namespace Ambilight
 {
     public partial class SaturationControl : Form
     {
-        private EventHandler valueChangedHandler;
+        private readonly EventHandler _valueChangedHandler;
 
         public SaturationControl(EventHandler valueChangedHandler, float saturation)
         {
-            this.valueChangedHandler = valueChangedHandler;
+            _valueChangedHandler = valueChangedHandler;
             InitializeComponent();
-            this.saturationBar.Value = (int)saturation;
+            saturationBar.Value = (int)saturation;
         }
 
         private void saturationBar_ValueChanged(object sender, EventArgs e)
         {
-          
-
-            valueChangedHandler.Invoke(sender, e);
+            _valueChangedHandler.Invoke(sender, e);
         }
     }
 }

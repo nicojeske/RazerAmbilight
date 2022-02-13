@@ -10,16 +10,16 @@ namespace Ambilight.Logic
     /// <summary>
     /// Handles the Ambilight Effect for the mouse
     /// </summary>
-    class MouseLogic : IDeviceLogic
+    internal class MouseLogic : IDeviceLogic
     {
-        private TraySettings _settings;
-        private IChroma _chroma;
+        private readonly TraySettings _settings;
+        private readonly IChroma _chroma;
         private CustomMouseEffect _mouseGrid = CustomMouseEffect.Create();
 
         public MouseLogic(TraySettings settings, IChroma chromaInstance)
         {
-            this._settings = settings;
-            this._chroma = chromaInstance;
+            _settings = settings;
+            _chroma = chromaInstance;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Ambilight.Logic
         /// <param name="newImage">ScreenShot</param>
         public void Process(Bitmap newImage)
         {
-            Bitmap mapMouse = ImageManipulation.ResizeImage(newImage, MouseConstants.MaxColumns,
+            var mapMouse = ImageManipulation.ResizeImage(newImage, MouseConstants.MaxColumns,
                     MouseConstants.MaxRows);
             mapMouse = ImageManipulation.ApplySaturation(mapMouse, _settings.Saturation);            
             ApplyPictureToGrid(mapMouse);
@@ -39,8 +39,7 @@ namespace Ambilight.Logic
         /// <summary>
         /// From a given resized screenshot, an ambilight effect will be created for the mouse
         /// </summary>
-        /// <param name="mapMousePad">resized screenshot</param>
-        /// <param name="mousePadGrid">effect grid</param>
+        /// <param name="mapMouse">Resized screenshot</param>
         /// <returns>EffectGrid</returns>
         private void ApplyPictureToGrid(Bitmap mapMouse)
         {
@@ -49,19 +48,10 @@ namespace Ambilight.Logic
             {
                 for (var c = 0; c < MouseConstants.MaxColumns; c++)
                 {
-                    Color color;
-
-                    if (_settings.AmbiModeEnabled)
-                        color = mapMouse.GetPixel(6, 8);
-                    else
-                        color = mapMouse.GetPixel(c, r);
-
-
-                    _mouseGrid[r, c] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+                    var color = mapMouse.GetPixel(c, r);
+                    _mouseGrid[r, c] = new ColoreColor(color.R, color.G, color.B);
                 }
             }
         }
     }
-
-
 }

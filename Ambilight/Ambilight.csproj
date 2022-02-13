@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Ambilight</RootNamespace>
     <AssemblyName>Ambilight</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -41,11 +41,12 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -166,7 +167,6 @@
     <Compile Include="DesktopDuplication\DesktopDuplicationException.cs" />
     <Compile Include="DesktopDuplication\DesktopDuplicator.cs" />
     <Compile Include="DesktopDuplication\DesktopDuplicatorReader.cs" />
-    <Compile Include="DesktopDuplication\IDesktopDuplicatorReader.cs" />
     <Compile Include="Extensions\RawRectangleExtensions.cs" />
     <Compile Include="GUI\Monitor.cs">
       <SubType>Form</SubType>
@@ -181,14 +181,11 @@
     <Compile Include="GUI\KeyboardSizeControl.Designer.cs">
       <DependentUpon>KeyboardSizeControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Logic\HeadsetLogic.cs" />
     <Compile Include="Logic\IDeviceLogic.cs" />
     <Compile Include="Logic\KeyboardLogic.cs" />
-    <Compile Include="Logic\KeypadLogic.cs" />
     <Compile Include="Logic\LinkLogic.cs" />
     <Compile Include="Logic\LogicManager.cs" />
     <Compile Include="Logic\MouseLogic.cs" />
-    <Compile Include="Logic\MousePadLogic.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -202,7 +199,6 @@
     <Compile Include="GUI\SaturationControl.Designer.cs">
       <DependentUpon>SaturationControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\FpsLogger.cs" />
     <Compile Include="Util\ImageManipulation.cs" />
     <Compile Include="Util\ScreenInterrogatory.cs" />
@@ -222,7 +218,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 und x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 и x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -232,6 +228,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ambi.xml" />
     <Content Include="Color_Wheel.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

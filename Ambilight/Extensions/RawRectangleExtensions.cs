@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rectangle = SharpDX.Mathematics.Interop.RawRectangle;
+﻿using Rectangle = SharpDX.Mathematics.Interop.RawRectangle;
 
 namespace Ambilight.Extensions
 {
-    static class RawRectangleExtensions
+    internal static class RawRectangleExtensions
     {
         public static int GetWidth(this Rectangle rect)
         {
