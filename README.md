@@ -14,6 +14,7 @@
 ## Download:
 You can always download the latest release from here: https://github.com/nicojeske/RazerAmbilight/releases
 Make sure that you have Razer Synapse running. Otherwise the app won't work.
+### This repository releases: https://github.com/s0flY/RazerAmbilight/releases
 
 ## Note:
 A Windows Smart Screen message may appear during installation. This tells you that my program is not signed by a certification authority recognized by Microsoft. Because these certifications cost a lot of money, which I cannot afford as a student, my program is therefore not signed.
