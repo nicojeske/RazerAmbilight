@@ -1,10 +1,10 @@
 ﻿<item>
-	<version>3.0.0.0</version>
+	<version>3.0.1.0</version>
 	<url>
-		https://github.com/s0flY/RazerAmbilight/releases/download/3.0.0/RazerAmbilightSetup3_0_0.msi
+		https://github.com/s0flY/RazerAmbilight/releases/download/3.0.1/Installer.msi
 	</url>
 	<changelog>
-		https://github.com/s0flY/RazerAmbilight/releases/tag/3.0.0
+		https://github.com/s0flY/RazerAmbilight/releases/tag/3.0.1
 	</changelog>
 	<mandatory>false</mandatory>
 </item>

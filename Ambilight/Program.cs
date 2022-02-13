@@ -17,7 +17,7 @@ namespace Ambilight
         private static void Main()
         {
             Logger.Info("\n\n\n --- Razer Ambilight Version 3.0.S1 ----");
-            AutoUpdater.Start("https://github.com/s0flY/RazerAmbilight/blob/master/ambi.xml");
+            AutoUpdater.Start("https://github.com/s0flY/RazerAmbilight/blob/master/Ambilight/ambi.xml");
 
             var tray = new GUI.TraySettings();
             
