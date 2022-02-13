@@ -13,14 +13,14 @@ namespace Ambilight.Logic
     /// </summary>
     class LinkLogic : IDeviceLogic
     {
-        private GUI.TraySettings _settings;
+        private TraySettings _settings;
         private CustomChromaLinkEffect _linkGrid = CustomChromaLinkEffect.Create();
         private IChroma _chroma;
         
         public LinkLogic(TraySettings settings, IChroma chromaInstance)
         {
-            this._settings = settings;
-            this._chroma = chromaInstance;
+            _settings = settings;
+            _chroma = chromaInstance;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Ambilight.Logic
         /// <param name="newImage">ScreenShot</param>
         public void Process(Bitmap newImage)
         {
-            Bitmap map = ImageManipulation.ResizeImage(newImage, 4, 1);
+            Bitmap map = ImageManipulation.ResizeImage(newImage, 5, 2);
             map = ImageManipulation.ApplySaturation(map, _settings.Saturation);
             
             ApplyImageToGrid(map);
@@ -41,7 +41,7 @@ namespace Ambilight.Logic
         private void ApplyC1(Bitmap map)
         {
             Color color = map.GetPixel(0,0);
-            _linkGrid[0] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+            _linkGrid[0] = new ColoreColor(color.R, color.G, color.B);
         }
 
         /// <summary>
@@ -51,11 +51,16 @@ namespace Ambilight.Logic
         private void ApplyImageToGrid(Bitmap map)
         {
             //Iterating over each key and set it to the corrosponding color of the resized Screenshot
-            for (int i = 1; i < Colore.Effects.ChromaLink.ChromaLinkConstants.MaxLeds; i++)
-            {
-                Color color = map.GetPixel(i-1,0);
-                _linkGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
-            }
+            // for (int i = 1; i < Colore.Effects.ChromaLink.ChromaLinkConstants.MaxLeds; i++)
+            // {
+            //     Color color = map.GetPixel(i-1,0);
+            //     _linkGrid[i] = new ColoreColor((byte)color.R, (byte)color.G, (byte)color.B);
+            // }
+
+            Color upperBulbColor = map.GetPixel(2,0);
+            _linkGrid[2] = new ColoreColor(upperBulbColor.R, upperBulbColor.G, upperBulbColor.B);
+            Color downStripColor = map.GetPixel(2,1);
+            _linkGrid[3] = new ColoreColor(downStripColor.R, downStripColor.G, downStripColor.B);
         }
     }
 }
