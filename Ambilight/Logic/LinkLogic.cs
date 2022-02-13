@@ -29,7 +29,7 @@ namespace Ambilight.Logic
         /// <param name="newImage">ScreenShot</param>
         public void Process(Bitmap newImage)
         {
-            Bitmap map = ImageManipulation.ResizeImage(newImage, 5, 2);
+            Bitmap map = ImageManipulation.ResizeImage(newImage, 5, 3);
             map = ImageManipulation.ApplySaturation(map, _settings.Saturation);
             
             ApplyImageToGrid(map);
@@ -59,7 +59,7 @@ namespace Ambilight.Logic
 
             Color upperBulbColor = map.GetPixel(2,0);
             _linkGrid[2] = new ColoreColor(upperBulbColor.R, upperBulbColor.G, upperBulbColor.B);
-            Color downStripColor = map.GetPixel(2,1);
+            Color downStripColor = map.GetPixel(2,2);
             _linkGrid[3] = new ColoreColor(downStripColor.R, downStripColor.G, downStripColor.B);
         }
     }

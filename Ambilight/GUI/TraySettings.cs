@@ -109,37 +109,37 @@ namespace Ambilight.GUI
                 Properties.Settings.Default.Save();
             });
 
-            MenuItem _mouseEnabled = new MenuItem("Mouse enabled", (sender, args) =>
-            {
-                EnableMenuItemOnClick(sender, args);
-                Properties.Settings.Default.mouseEnabled = (sender as MenuItem).Checked;
-                MouseEnabled = (sender as MenuItem).Checked;
-                Properties.Settings.Default.Save();
-            });
+            // MenuItem _mouseEnabled = new MenuItem("Mouse enabled", (sender, args) =>
+            // {
+            //     EnableMenuItemOnClick(sender, args);
+            //     Properties.Settings.Default.mouseEnabled = (sender as MenuItem).Checked;
+            //     MouseEnabled = (sender as MenuItem).Checked;
+            //     Properties.Settings.Default.Save();
+            // });
 
-            MenuItem _mousematEnabled = new MenuItem("Mousemat enabled", (sender, args) =>
-            {
-                EnableMenuItemOnClick(sender, args);
-                Properties.Settings.Default.mousematEnabled = (sender as MenuItem).Checked;
-                PadEnabled = (sender as MenuItem).Checked;
-                Properties.Settings.Default.Save();
-            });
-            
-            MenuItem _headsetEnabled = new MenuItem("Headset enabled", (sender, args) =>
-            {
-                EnableMenuItemOnClick(sender, args);
-                Properties.Settings.Default.headsetEnabled = (sender as MenuItem).Checked;
-                HeadsetEnabled = (sender as MenuItem).Checked;
-                Properties.Settings.Default.Save();
-            });
-            
-            MenuItem _keypadEnabled = new MenuItem("Keypad enabled", (sender, args) =>
-            {
-                EnableMenuItemOnClick(sender, args);
-                Properties.Settings.Default.keypadEnabled = (sender as MenuItem).Checked;
-                KeypadEnabeled = (sender as MenuItem).Checked;
-                Properties.Settings.Default.Save();
-            });
+            // MenuItem _mousematEnabled = new MenuItem("Mousemat enabled", (sender, args) =>
+            // {
+            //     EnableMenuItemOnClick(sender, args);
+            //     Properties.Settings.Default.mousematEnabled = (sender as MenuItem).Checked;
+            //     PadEnabled = (sender as MenuItem).Checked;
+            //     Properties.Settings.Default.Save();
+            // });
+            //
+            // MenuItem _headsetEnabled = new MenuItem("Headset enabled", (sender, args) =>
+            // {
+            //     EnableMenuItemOnClick(sender, args);
+            //     Properties.Settings.Default.headsetEnabled = (sender as MenuItem).Checked;
+            //     HeadsetEnabled = (sender as MenuItem).Checked;
+            //     Properties.Settings.Default.Save();
+            // });
+            //
+            // MenuItem _keypadEnabled = new MenuItem("Keypad enabled", (sender, args) =>
+            // {
+            //     EnableMenuItemOnClick(sender, args);
+            //     Properties.Settings.Default.keypadEnabled = (sender as MenuItem).Checked;
+            //     KeypadEnabeled = (sender as MenuItem).Checked;
+            //     Properties.Settings.Default.Save();
+            // });
 
             MenuItem _linkEnabled = new MenuItem("LinkChroma enabled", (sender, args) =>
             {
@@ -176,14 +176,14 @@ namespace Ambilight.GUI
 
             _keyboardEnabled.Checked = Properties.Settings.Default.keyboardEnabled;
             KeyboardEnabled = Properties.Settings.Default.keyboardEnabled;
-            _mouseEnabled.Checked = Properties.Settings.Default.mouseEnabled;
-            MouseEnabled = Properties.Settings.Default.mouseEnabled;
-            _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
-            PadEnabled = Properties.Settings.Default.mousematEnabled;
-            _headsetEnabled.Checked = Properties.Settings.Default.headsetEnabled;
-            HeadsetEnabled = Properties.Settings.Default.headsetEnabled;
-            _keypadEnabled.Checked = Properties.Settings.Default.keypadEnabled;
-            KeypadEnabeled = Properties.Settings.Default.keypadEnabled;
+            // _mouseEnabled.Checked = Properties.Settings.Default.mouseEnabled;
+            MouseEnabled = false; //Properties.Settings.Default.mouseEnabled;
+            // _mousematEnabled.Checked = Properties.Settings.Default.mousematEnabled;
+            PadEnabled = false; //Properties.Settings.Default.mousematEnabled;
+            // _headsetEnabled.Checked = Properties.Settings.Default.headsetEnabled;
+            HeadsetEnabled = false; //Properties.Settings.Default.headsetEnabled;
+            // _keypadEnabled.Checked = Properties.Settings.Default.keypadEnabled;
+            KeypadEnabeled = false; //Properties.Settings.Default.keypadEnabled;
             _linkEnabled.Checked = Properties.Settings.Default.linkEnabled;
             LinkEnabled = Properties.Settings.Default.linkEnabled;
             _ambiModeEnabled.Checked = Properties.Settings.Default.ambiEnabled;
@@ -207,10 +207,10 @@ namespace Ambilight.GUI
             contextMenu.MenuItems.Add("-");
 
             contextMenu.MenuItems.Add(_keyboardEnabled);
-            contextMenu.MenuItems.Add(_mouseEnabled);
-            contextMenu.MenuItems.Add(_mousematEnabled);
-            contextMenu.MenuItems.Add(_headsetEnabled);
-            contextMenu.MenuItems.Add(_keypadEnabled);
+            // contextMenu.MenuItems.Add(_mouseEnabled);
+            // contextMenu.MenuItems.Add(_mousematEnabled);
+            // contextMenu.MenuItems.Add(_headsetEnabled);
+            // contextMenu.MenuItems.Add(_keypadEnabled);
             contextMenu.MenuItems.Add(_linkEnabled);
             
             contextMenu.MenuItems.Add("-");
@@ -225,10 +225,10 @@ namespace Ambilight.GUI
             };
 
             logger.Info("Keyboard Enabled: " + _keyboardEnabled.Checked);
-            logger.Info("Mouse Enabled: " + _mouseEnabled.Checked);
-            logger.Info("Mousemat Enabled: " + _mousematEnabled.Checked);
-            logger.Info("Headset Enabled: " + _headsetEnabled.Checked);
-            logger.Info("Keypad Enabled: " + _keypadEnabled.Checked);
+            // logger.Info("Mouse Enabled: " + _mouseEnabled.Checked);
+            // logger.Info("Mousemat Enabled: " + _mousematEnabled.Checked);
+            // logger.Info("Headset Enabled: " + _headsetEnabled.Checked);
+            // logger.Info("Keypad Enabled: " + _keypadEnabled.Checked);
             logger.Info("ChromaLink Enabled: " + _linkEnabled.Checked);
             logger.Info("Ambilight mode: " + _ambiModeEnabled.Checked);
             logger.Info("Ultrawide mode: " + _ultrawideModeEnabled.Checked);
